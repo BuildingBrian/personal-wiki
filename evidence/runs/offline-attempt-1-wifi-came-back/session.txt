@@ -1,0 +1,224 @@
+DEMONSTRATION   2026-09-29 16:33:18 PDT
+
+##### 0. Network state, from the operating system
+Wi-Fi Power (en0): Off
+default route: route: writing to routing socket: not in table
+ping 1.1.1.1:  1 packets transmitted, 0 packets received, 100.0% packet loss
+github.com:    nc: getaddrinfo: nodename nor servname provided, or not known
+unreachable
+
+##### 1. ./wiki help
+Personal wiki: talk to your own notes with a local Gemma model. Works offline.
+
+Commands
+  ./wiki ingest vault/raw          read the sources, rebuild the search index, draft linked wiki notes
+  ./wiki search "row level security"   show original passages and where they come from (no model)
+  ./wiki ask "Where is ...?"       neutral standalone answer with citations, or "insufficient evidence"
+  ./wiki chat                      personal assistant with conversation context
+  ./wiki check                     check note names, headings, links and source references (no model)
+  ./wiki status                    model, runtime, device and index details
+  ./wiki test                      run the four ask tests and the mode checks, save evidence
+  ./wiki help                      this page
+
+Required inputs
+  Sources   .md or .txt files in vault/raw/ (never modified)
+  Model     a Gemma model in a local Ollama runtime (default gemma4:e2b); download it while online:
+            ollama pull gemma4:e2b
+Configuration
+  harness/config.py                passage size, top-k, context size, folders
+  prompts/wiki-instructions.md     research rules for ask
+  prompts/persona.md               the assistant's voice and capabilities for chat
+  WIKI_MODEL, WIKI_OLLAMA_URL      environment overrides
+Execution
+  --mode local is the default and the only mode implemented. Nothing is sent off this machine.
+
+##### 2. ./wiki status   (model, runtime, device, network)
+{
+  "device": {
+    "os": "macOS 26.6.2",
+    "machine": "x86_64",
+    "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
+    "cpu_cores": "6",
+    "ram_gb": 32,
+    "available_memory_gb": 12.7,
+    "gpu": [
+      "Intel UHD Graphics 630",
+      "1536 MB",
+      "AMD Radeon Pro 5300M",
+      "4 GB"
+    ],
+    "free_disk_gb": 23.2,
+    "python": "3.14.3"
+  },
+  "recorded_at": "2026-09-29 16:33:51 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "Off",
+    "default_route": false,
+    "outside_host_answered": false,
+    "offline": true
+  },
+  "internet_reachable": false,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": null,
+    "in_gpu_gb": null,
+    "processor": "not loaded"
+  },
+  "index": {
+    "passages": 121,
+    "method": "BM25 (k1=1.5, b=0.75), stdlib only",
+    "built_at": "2026-09-29T10:50:58",
+    "sources": 3,
+    "target_passage_words": 130
+  }
+}
+
+saved to /Users/brianarevaloramos/Developer/personal-wiki/evidence/model_card.json
+
+##### 3. ./wiki ingest "vault/raw/Pac-Man DQN README.md" --force   (local Gemma drafts the notes again)
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: OFFLINE (Wi-Fi off, no network route)
+INGEST  3 sources in vault/raw
+  S1  raw/Custom LLM README.md  (8168 words)  unchanged
+  S2  raw/Networking Tracker README.md  (4153 words)  unchanged
+  S3  raw/Pac-Man DQN README.md  (3186 words)  unchanged
+  search index rebuilt: 121 passages (no model needed for this step)
+  S3 Pac-Man DQN README: 5 notes planned
+    drafted "Pac-Man DQN Project" in 50.31 s (read 935 tokens, passed 440 words of source)
+    kept the reviewed note; the fresh draft is in data/drafts/ for comparison
+    drafted "Pac-Man Training Choices" in 41.88 s (read 1127 tokens, passed 633 words of source)
+    kept the reviewed note; the fresh draft is in data/drafts/ for comparison
+    drafted "Pac-Man Training Results" in 40.0 s (read 1093 tokens, passed 508 words of source)
+    kept the reviewed note; the fresh draft is in data/drafts/ for comparison
+    drafted "Pac-Man Gameplay Progress" in 60.75 s (read 1503 tokens, passed 548 words of source)
+    kept the reviewed note; the fresh draft is in data/drafts/ for comparison
+    drafted "Pac-Man Agent Limitation" in 35.08 s (read 745 tokens, passed 389 words of source)
+    kept the reviewed note; the fresh draft is in data/drafts/ for comparison
+  index.md rebuilt: 22 notes, 3 sources
+
+  created 0 · updated 0 · kept reviewed 5 · already up to date 0
+  notes in vault/wiki: 22 before, 22 after · files outside the plan (duplicates): 0
+  done in 228.4 s
+  report saved to evidence/ingest/ingest-20260929-163745.json
+
+##### 4. ./wiki search "row level security"   (no model)
+SEARCH  "row level security"   (keyword index over original sources; no model call, no generated answer)
+query terms: row, level, security
+
+[1] vault/raw/Networking Tracker README.md  ›  Technology stack and why  (lines 68–77)
+    passage S2-P005 · score 10.02 · matched: row, level, security
+    | | Layer | Choice | Why |
+    | | --- | --- | --- |
+    | | Framework | **Next.js 16 (App Router) + TypeScript** | Keeps the frontend and backend in one repo while staying genuinely separate — React client components in the browser, Route Handlers on the server. Also the deployment target Vercel is built around. |
+    | | Styling | **Tailwind CSS v4 + shadcn/ui** | shadcn/ui is a real component system (Base UI primitives with consistent design tokens) rather than hand-rolled CSS, so the UI stays accessible and consistent across breakpoints with little custom code. |
+    | | Database | **Neon Postgres** | Serverless Postgres that supports Row Level Security — which is where this app's security actually lives. |
+    | | Auth | **Neon Managed Better Auth** | Issues a JWT whose subject Postgres reads as `auth.user_id()`. That is what makes database-level ownership possible without the app ever passing a user ID around. |
+
+[2] vault/raw/Networking Tracker README.md  ›  Networking Tracker  (lines 3–7)
+    passage S2-P001 · score 8.73 · matched: row, level, security
+    | A private, per-user networking tracker for the people you want to stay connected with at Berkeley. Sign up, add the people you meet — name, company, role, where you met, notes, and a priority — then sort, filter, edit, and delete them. Every contact belongs to exactly one account, and that ownership is enforced by **Row Level Security inside Postgres** rather than by application code, so the data stays private even against a request made directly to the public Data API with a valid login.
+    | 
+    | **Live app:** **https://networking-tracker-gules.vercel.app**
+    | 
+    | **Repository:** https://github.com/BuildingBrian/networking-tracker
+
+[3] vault/raw/Networking Tracker README.md  ›  Architecture  (lines 83–102)
+    passage S2-P007 · score 7.23 · matched: row, level, security
+    | ```
+    | Browser (React client components — src/components/*)
+    |   │
+    |   │  fetch('/api/contacts')              never talks to Postgres or the Data API
+    |   ▼
+    | Next.js Route Handlers (src/app/api/contacts/…)          ← the backend
+    |   │  1. getSessionUser()   → 401 if not signed in
+    |   │  2. Zod validation     → 400 with per-field messages
+    |   │  3. exchange the session cookie for the user's JWT
+    |   │  4. Data API call carrying THAT JWT
+    |   ▼
+    | Neon Data API (PostgREST)
+    |   │
+    |   ▼
+    | Neon Postgres — Row Level Security decides which rows the query may touch
+    | ```
+    | 
+    | **Frontend** — `src/components/*` are client components. They hold UI state (filters, sort, dialogs) and talk only to this app's own `/api` routes. They never see a database credential.
+    | 
+    | **Backend** — `src/app/api/contacts/route.ts` (list, create) and `src/app/api/contacts/[id]/route.ts` (update, delete) are the server. Each handler authenticates the session, validates the body against a Zod schema, and only then issues a Data API query. `src/app/api/auth/[...path]/route.ts` proxies Neon Auth so the session lands in an **httpOnly, signed cookie** rather than browser-readable storage. `src/middleware.ts` redirects unauthenticated visits to `/contacts` to the sign-in page.
+
+[4] vault/raw/Custom LLM README.md  ›  4. The fixed 48-case language evals > 4.2 All 48 cases  (lines 348–395)
+    passage S1-P032 · score 5.04 · matched: security
+    | | lang_01 | domain_context | the report about the customer explains the | service | ❌ juice | ✅ service | ❌ code | ✅ service | support in detail . |
+    | | lang_02 | domain_context | the report about the merchandise explains the | quality | ❌ lesson | ✅ quality | ✅ quality | ✅ quality | return in detail . |
+    | | lang_03 | domain_context | the report about the mortgage explains the | payment | ❌ harvest | ✅ payment | ✅ payment | ✅ payment | return in detail . |
+    | | lang_04 | domain_context | the report about the mango explains the | juice | ✅ juice | ✅ juice | ❌ code | ✅ juice | taste in detail . |
+    | | lang_05 | domain_context | the report about the bicycle explains the | journey | ✅ journey | ✅ journey | ❌ price | ✅ journey | traffic in detail . |
+    | | lang_06 | domain_context | the report about the application explains the | security | ❌ student | ✅ security | ❌ payment | ✅ security | security in detail . |
+
+[5] vault/raw/Custom LLM README.md  ›  3. Evidence from inside the network > 3.6 Attention rows  (lines 265–274)
+    passage S1-P024 · score 3.66 · matched: row
+    | For the three-token prefix `<BOS> the customer`, the notebook saves one head's attention weights
+    | ([inspection.json → attention_rows](evidence/starter/inspection.json)): each row is a position, each column an earlier position.
+    | 
+    | ```
+    | Experiment 1: [[1.0, 0.0, 0.0], [0.606, 0.394, 0.0], [0.485, 0.423, 0.092]]
+    | Experiment 2: [[1.0, 0.0, 0.0], [0.154, 0.846, 0.0], [0.449, 0.28, 0.271]]
+    | ```
+    | 
+    | Row 1 can only look at itself (1.0); row 2 splits its attention between `<BOS>` and `the`; row 3 (`customer`) spreads
+    | over all three. The zeros above the diagonal are the causal mask: a position never sees tokens after it, which is what lets
+    | the model generate left to right.
+
+##### 5. ./wiki test   (four ask-mode questions, then the chat, search and separation checks)
+====================================================================================================
+ASK  "What was the mean evaluation score of the Pac-Man agent before and after training?"   (standalone: no chat history, no persona)
+model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
+
+The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].
+
+Citations:
+  [1] vault/raw/Pac-Man DQN README.md  ›  Ms. Pac-Man DQN — Class 3 assignment  (lines 3–17)
+  [2] vault/raw/Pac-Man DQN README.md  ›  4. What actually happened > The five before-and-after scores  (lines 125–138)
+
+(43.88 s · read 1654 tokens at 42.4/s · wrote 60 at 13.5/s · model memory 7.68 GB)
+
+====================================================================================================
+ASK  "Which skill did my tiny language model fail to pick up, and what wrong word did it choose?"   (standalone: no chat history, no persona)
+model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
+
+Negation transfer failed [3]. The model picked the negated word, such as "tea", instead of the corrected one, or an unrelated color like "green" [3].
+
+Citations:
+  [3] vault/raw/Custom LLM README.md  ›  7. One limitation and my next experiment  (lines 519–528)
+
+(33.86 s · read 1556 tokens at 52.0/s · wrote 37 at 10.3/s · model memory 7.68 GB)
+
+====================================================================================================
+ASK  "How does the networking tracker stop one user from reading another user's contacts?"   (standalone: no chat history, no persona)
+model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
+
+Row Level Security inside Postgres enforces that every contact belongs to exactly one account, which keeps the data private even when a request is made directly to the public Data API with a valid login [3]. This mechanism prevents one user from reading another user's contacts [1, 2].
+
+Citations:
+  [1] vault/raw/Networking Tracker README.md  ›  Production verification  (lines 376–388)
+  [2] vault/raw/Networking Tracker README.md  ›  Tests > Test output  (lines 297–326)
+  [3] vault/raw/Networking Tracker README.md  ›  Networking Tracker  (lines 3–7)
+
+(48.77 s · read 1698 tokens at 39.7/s · wrote 58 at 10.5/s · model memory 7.68 GB)
+
+====================================================================================================
+
+FINISHED   2026-09-29 16:40:26 PDT
+network at the end: Wi-Fi Power (en0): On

@@ -1,0 +1,53 @@
+{
+  "device": {
+    "os": "macOS 26.6.2",
+    "machine": "x86_64",
+    "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
+    "cpu_cores": "6",
+    "ram_gb": 32,
+    "available_memory_gb": 12.7,
+    "gpu": [
+      "Intel UHD Graphics 630",
+      "1536 MB",
+      "AMD Radeon Pro 5300M",
+      "4 GB"
+    ],
+    "free_disk_gb": 23.2,
+    "python": "3.14.3"
+  },
+  "recorded_at": "2026-09-29 16:33:51 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "Off",
+    "default_route": false,
+    "outside_host_answered": false,
+    "offline": true
+  },
+  "internet_reachable": false,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": null,
+    "in_gpu_gb": null,
+    "processor": "not loaded"
+  },
+  "index": {
+    "passages": 121,
+    "method": "BM25 (k1=1.5, b=0.75), stdlib only",
+    "built_at": "2026-09-29T10:50:58",
+    "sources": 3,
+    "target_passage_words": 130
+  }
+}

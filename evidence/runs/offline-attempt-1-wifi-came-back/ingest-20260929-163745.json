@@ -1,0 +1,110 @@
+{
+  "created": [],
+  "updated": [],
+  "kept_reviewed": [
+    "Pac-Man DQN Project",
+    "Pac-Man Training Choices",
+    "Pac-Man Training Results",
+    "Pac-Man Gameplay Progress",
+    "Pac-Man Agent Limitation"
+  ],
+  "up_to_date": [],
+  "flags": {},
+  "drafts": [
+    {
+      "note": "Pac-Man DQN Project",
+      "source": "S3",
+      "source_words_passed": 440,
+      "purpose": "ingest-note",
+      "wall_seconds": 50.31,
+      "load_seconds": 11.07,
+      "prompt_tokens": 935,
+      "output_tokens": 276,
+      "prompt_tokens_per_s": 50.2,
+      "output_tokens_per_s": 13.7
+    },
+    {
+      "note": "Pac-Man Training Choices",
+      "source": "S3",
+      "source_words_passed": 633,
+      "purpose": "ingest-note",
+      "wall_seconds": 41.88,
+      "load_seconds": 0.38,
+      "prompt_tokens": 1127,
+      "output_tokens": 241,
+      "prompt_tokens_per_s": 46.0,
+      "output_tokens_per_s": 14.4
+    },
+    {
+      "note": "Pac-Man Training Results",
+      "source": "S3",
+      "source_words_passed": 508,
+      "purpose": "ingest-note",
+      "wall_seconds": 40.0,
+      "load_seconds": 0.3,
+      "prompt_tokens": 1093,
+      "output_tokens": 199,
+      "prompt_tokens_per_s": 43.6,
+      "output_tokens_per_s": 13.8
+    },
+    {
+      "note": "Pac-Man Gameplay Progress",
+      "source": "S3",
+      "source_words_passed": 548,
+      "purpose": "ingest-note",
+      "wall_seconds": 60.75,
+      "load_seconds": 0.32,
+      "prompt_tokens": 1503,
+      "output_tokens": 330,
+      "prompt_tokens_per_s": 43.2,
+      "output_tokens_per_s": 13.1
+    },
+    {
+      "note": "Pac-Man Agent Limitation",
+      "source": "S3",
+      "source_words_passed": 389,
+      "purpose": "ingest-note",
+      "wall_seconds": 35.08,
+      "load_seconds": 0.35,
+      "prompt_tokens": 745,
+      "output_tokens": 211,
+      "prompt_tokens_per_s": 38.2,
+      "output_tokens_per_s": 14.0
+    }
+  ],
+  "retired": [],
+  "notes_before": 22,
+  "notes_after": 22,
+  "new_files": [],
+  "unplanned_files": [],
+  "seconds": 228.4,
+  "command": "ingest vault/raw/Pac-Man DQN README.md --force",
+  "recorded_at": "2026-09-29 16:37:45 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "On",
+    "default_route": true,
+    "outside_host_answered": false,
+    "offline": false
+  },
+  "internet_reachable": true,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": 7.68,
+    "in_gpu_gb": 0.0,
+    "processor": "100% CPU"
+  }
+}

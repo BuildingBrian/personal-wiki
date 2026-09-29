@@ -33,8 +33,7 @@ mkdir -p "$OUT"
   ./wiki help
   echo
   echo "##### 2. ./wiki status   (model, runtime, device, network)"
-  ./wiki status --save
-  cp evidence/model_card.json "$OUT/model_card.json"
+  ./wiki status
   echo
   echo "##### 3. ./wiki ingest \"vault/raw/Pac-Man DQN README.md\" --force   (local Gemma drafts the notes again)"
   ./wiki ingest "vault/raw/Pac-Man DQN README.md" --force
@@ -44,6 +43,10 @@ mkdir -p "$OUT"
   echo
   echo "##### 5. ./wiki test   (four ask-mode questions, then the chat, search and separation checks)"
   ./wiki test --out "$OUT"
+  echo
+  echo "##### 6. ./wiki status --save   (Gemma is loaded now, so its memory use is measured)"
+  ./wiki status --save
+  cp evidence/model_card.json "$OUT/model_card.json"
   echo
   echo "FINISHED   $(date '+%Y-%m-%d %H:%M:%S %Z')"
   echo "network at the end: $(networksetup -getairportpower en0)"
