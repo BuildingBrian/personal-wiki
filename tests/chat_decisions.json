@@ -1,0 +1,13 @@
+{
+  "note": "Messages used to check chat's retrieval decision without calling the model. 1 = the turn needs my notes, 0 = it does not.",
+  "cases": [
+    ["what can we do?", 0], ["what can you help me with?", 0], ["hello", 0], ["thanks, that helps", 0],
+    ["make that shorter", 0], ["For the record, I have decided to name my next project Falcon.", 0],
+    ["help me brainstorm names for a robotics club", 0], ["how should I structure my week?", 0],
+    ["I feel behind on everything today", 0], ["give me three ideas for a weekend project", 0],
+    ["what should I cook tonight?", 0],
+    ["Draft a short plan for my next Pac-Man experiment.", 1], ["What did the Pac-Man agent score after training?", 1],
+    ["Why did negation fail in my language model?", 1], ["Write a two-line LinkedIn post about my networking tracker.", 1],
+    ["what is row level security and how did I use it?", 1], ["Can you remind me what hardware I was considering?", 1]
+  ]
+}

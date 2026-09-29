@@ -25,7 +25,7 @@ This document details the process of building a custom Large Language Model usin
 
 ## Related notes
 
-- (none yet)
+- [[Custom LLM Language Evals]] — This note details the process of building a custom LLM using nanoGPT.
 
 ## Sources
 

@@ -1,0 +1,5 @@
+CHECK  21 wiki notes · 127 links · 50 source references
+  file names 2 to 6 words, no machine-style names, first heading = file name, every note in the plan,
+  every link resolves to exactly one file, every source reference points to a real heading
+
+  0 problems

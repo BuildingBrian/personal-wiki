@@ -8,6 +8,7 @@ import sys
 import time
 
 from . import ask, config, index, model, search
+from .textutil import terms
 
 CAPABILITY = re.compile(r"(what can (we|you|i) do|what can you help|what (do|can) you do|who are you|what are you|"
                         r"how do you work|your capabilit|^\s*(hello|hi|hey|good (morning|afternoon|evening))\b)", re.I)
@@ -15,8 +16,17 @@ FOLLOW_UP = re.compile(r"^\s*(make (that|it|this)\b|shorten|shorter|longer|rewri
                        r"simplif|expand (that|it)|turn (that|it)|summari[sz]e (that|it)|same but|now (make|do|write)|"
                        r"thanks|thank you|ok\b|okay\b|great\b|nice\b|perfect\b|yes\b|no\b|sure\b)", re.I)
 EXPLICIT = re.compile(r"\b(my (notes|wiki|sources|write-?ups?)|in (the|my) wiki|from (the|my) wiki|according to|"
-                      r"look (it |that |this )?up|what did i|did i\b)", re.I)
-MIN_SCORE, MIN_TERMS, MIN_COVERAGE = 6.0, 2, 0.5
+                      r"look (it |that |this )?up|remind me|what (did|was|were|have|had) i\b|did i\b)", re.I)
+MIN_SCORE, MIN_TERMS, MIN_COVERAGE = 7.0, 3, 0.6
+
+
+def subjects(loaded_index):
+    """Names a message can use for a project: taken from the source names, plus a few aliases."""
+    names = {tuple(terms(re.sub(r"readme", "", source, flags=re.I))[:2])
+             for source in {p["source"] for p in loaded_index["passages"]}}
+    names |= {tuple(terms(alias)) for alias in config.CHAT_SUBJECT_ALIASES}
+    return {n for n in names if n}
+
 
 HELP = """Commands inside chat:
   /search <words>    show original passages from the sources (no model)
@@ -40,7 +50,11 @@ def decide(message, loaded_index):
         return None, "skipped: no wiki passage shares a word with this message"
     best = hits[0]
     if EXPLICIT.search(message):
-        return hits, f"looked up {len(hits)} passages: the message refers to the wiki"
+        return hits, f"looked up {len(hits)} passages: the message asks about my records"
+    said = set(terms(message))
+    named = [" ".join(name) for name in subjects(loaded_index) if set(name) <= said]
+    if named:
+        return hits, f"looked up {len(hits)} passages: the message names a project ({named[0]})"
     if len(best["matched_terms"]) >= MIN_TERMS and best["coverage"] >= MIN_COVERAGE and best["score"] >= MIN_SCORE:
         return hits, (f"looked up {len(hits)} passages: strong match with the sources "
                       f"(score {best['score']}, {int(best['coverage'] * 100)}% of the message's terms)")

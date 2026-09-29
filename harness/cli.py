@@ -4,7 +4,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import ask, chat, config, evidence, index, ingest, model, search
+from . import ask, chat, check, config, evidence, index, ingest, model, search
 
 OVERVIEW = """Personal wiki: talk to your own notes with a local Gemma model. Works offline.
 
@@ -13,6 +13,7 @@ Commands
   ./wiki search "row level security"   show original passages and where they come from (no model)
   ./wiki ask "Where is ...?"       neutral standalone answer with citations, or "insufficient evidence"
   ./wiki chat                      personal assistant with conversation context
+  ./wiki check                     check note names, headings, links and source references (no model)
   ./wiki status                    model, runtime, device and index details
   ./wiki test                      run the four ask tests and the mode checks, save evidence
   ./wiki help                      this page
@@ -54,6 +55,7 @@ def build_parser():
     p = sub.add_parser("test", help="run the four ask tests and the mode checks")
     p.add_argument("--out", type=Path, default=config.EVIDENCE, help="where to save the evidence")
     p.add_argument("--only", choices=["ask", "modes"], help="run one half only")
+    sub.add_parser("check", help="check names, headings, links and source references (no model)")
     sub.add_parser("help", help="show this page")
     return parser
 
@@ -96,6 +98,16 @@ def run_tests(out_dir, only=None):
         checks = tests["mode_checks"]
         modes = out_dir / "mode-checks"
         modes.mkdir(parents=True, exist_ok=True)
+        print("=" * 100 + "\nMODE CHECK 0: chat's retrieval decision on 17 messages (no model call)\n")
+        cases = json.loads((config.ROOT / "tests" / "chat_decisions.json").read_text(encoding="utf-8"))["cases"]
+        loaded, wrong, rows = index.load(), 0, []
+        for message, wanted in cases:
+            hits, reason = chat.decide(message, loaded)
+            wrong += bool(hits) != bool(wanted)
+            rows.append(f"{'ok ' if bool(hits) == bool(wanted) else 'BAD'} {'LOOKUP' if hits else 'skip  '} | {message:<66} | {reason}")
+        rows.append(f"\nmisjudged: {wrong} of {len(cases)}")
+        (modes / "chat-retrieval-decisions.txt").write_text("\n".join(rows) + "\n", encoding="utf-8")
+        print("\n".join(rows))
         print("=" * 100 + "\nMODE CHECK 1: chat capabilities and follow-up\n")
         chat.run(script=checks["chat_capabilities"] + checks["chat_followup"], transcript=modes / "chat-capabilities-and-followup.md")
         print("=" * 100 + "\nMODE CHECK 2: search returns passages and no generated answer\n")
@@ -144,6 +156,8 @@ def main(argv=None):
                     return 2
                 script = [l for l in args.script.read_text(encoding="utf-8").splitlines() if l.strip()]
             return chat.run(script=script, transcript=args.transcript)
+        if args.command == "check":
+            return 1 if check.run() else 0
         if args.command == "status":
             status(args.save)
             return 0

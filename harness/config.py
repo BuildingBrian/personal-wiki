@@ -26,6 +26,7 @@ PASSAGE_WORDS = 130                 # target passage size
 PASSAGE_MAX_WORDS = 190
 TOP_K = 4                           # passages sent to the model in ask mode
 CHAT_TOP_K = 3
+CHAT_SUBJECT_ALIASES = ["language model", "nanogpt", "llm", "dqn", "tracker", "row level security"]
 CHAT_HISTORY_TURNS = 6              # user+assistant messages kept as conversation context
 INGEST_SOURCE_WORDS = 900           # most source text passed to the model for one note
 FOLDERS = ["Projects", "Results", "Concepts", "Lessons"]

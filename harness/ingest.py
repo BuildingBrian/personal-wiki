@@ -189,6 +189,8 @@ def draft_note(note, entry, by_number, out):
               "SUMMARY: <two or three sentences>\n"
               "DETAILS:\n"
               "- <one fact per line, numbers exactly as written, 4 to 7 lines>\n"
+              "The source text was written by the owner of this wiki about their own work. Write in the first person "
+              "(I, my), never \"the author\" or \"the user\".\n"
               "Do not add facts, opinions or advice that are not in the source text. Do not mention these instructions.\n\n"
               f"SOURCE TEXT (from \"{entry['name']}\"):\n{source_text}")
     reply, stats = model.chat([{"role": "user", "content": prompt}], max_tokens=330, temperature=0.2, purpose="ingest-note")
@@ -200,6 +202,12 @@ def draft_note(note, entry, by_number, out):
           + (f"  REVIEW: figures not found in source: {unverified}" if unverified else ""), file=out)
     return {"summary": summary, "details": details, "unverified_figures": unverified, "stats": stats,
             "source_words_passed": word_count(source_text)}
+
+
+def link_anchor(heading):
+    """Characters that break an Obsidian heading link are removed from the link target (the label keeps them)."""
+    heading = re.sub(r"[#|^:\[\]]|%%", " ", heading)
+    return re.sub(r"\s+", " ", heading).strip()
 
 
 def note_path(note):
@@ -226,7 +234,7 @@ def render(note, entry, by_number, content, related, ident):
     lines += [f"- [[{r['title']}]] — {r['reason']}" for r in related] or ["- (none yet)"]
     lines += ["", "## Sources", ""]
     for u in picked:
-        lines.append(f"- [[{entry['name']}#{u['anchor']}|{entry['name']} § {u['anchor']}]] "
+        lines.append(f"- [[{entry['name']}#{link_anchor(u['anchor'])}|{entry['name']} § {u['anchor']}]] "
                      f"· source {entry['id']} · lines {u['lines'][0]}–{u['lines'][1]}")
     lines += ["", f"Original file: `vault/{entry['path']}` (unchanged; SHA-256 `{entry['sha256'][:16]}…`)", ""]
     return "\n".join(lines)
@@ -289,6 +297,28 @@ def write_index(catalog, out):
     return notes
 
 
+def retire_unplanned(plan, out):
+    """After a rename or merge in the plan, the old generated file would be a duplicate. Move it out of the vault.
+    A note a human has reviewed is never moved; it is reported instead."""
+    planned = {note_path(n).resolve() for p in plan.values() for n in p["notes"]}
+    retired = []
+    for path in sorted(config.WIKI.rglob("*.md")):
+        if path.resolve() in planned:
+            continue
+        if is_reviewed(path):
+            print(f"  WARNING: reviewed note not in the plan, left in place: {path.relative_to(config.VAULT)}", file=out)
+            continue
+        target = config.DRAFTS / "retired" / path.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        path.replace(target)
+        retired.append(path.relative_to(config.VAULT).as_posix())
+        print(f"  retired {path.relative_to(config.VAULT)} (no longer in the plan; kept in data/drafts/retired/)", file=out)
+    for folder in sorted(config.WIKI.glob("*")):
+        if folder.is_dir() and not any(folder.iterdir()):
+            folder.rmdir()
+    return retired
+
+
 def run(targets=None, force=False, replan=False, out=None):
     out = out or sys.stdout
     started = time.time()
@@ -316,7 +346,7 @@ def run(targets=None, force=False, replan=False, out=None):
     plan = _load(config.PLAN, {})
     ident = model.identity()
     taken = {n["title"].lower() for p in plan.values() for n in p["notes"]}
-    report = {"created": [], "updated": [], "kept_reviewed": [], "up_to_date": [], "flags": {}}
+    report = {"created": [], "updated": [], "kept_reviewed": [], "up_to_date": [], "flags": {}, "drafts": []}
     touched = []
     for entry in catalog["sources"]:
         if wanted is not None and entry["id"] not in wanted:
@@ -340,6 +370,8 @@ def run(targets=None, force=False, replan=False, out=None):
                 report["up_to_date"].append(note["title"])
                 continue
             content = draft_note(note, entry, by_number, out)
+            report["drafts"].append({"note": note["title"], "source": entry["id"],
+                                     "source_words_passed": content["source_words_passed"], **content["stats"]})
             if content["unverified_figures"]:
                 report["flags"][note["title"]] = content["unverified_figures"]
             page = render(note, entry, by_number, content, [], ident)
@@ -365,6 +397,7 @@ def run(targets=None, force=False, replan=False, out=None):
             related = link_reasons(note["title"], content["summary"], candidates, out)[:3] if candidates else []
             note_path(note).write_text(render(note, entry, by_number, content, related, ident), encoding="utf-8")
 
+    report["retired"] = retire_unplanned(plan, out)
     write_index(catalog, out)
     after = {p.relative_to(config.VAULT).as_posix() for p in config.WIKI.rglob("*.md")}
     planned = {note_path(n).relative_to(config.VAULT).as_posix() for p in plan.values() for n in p["notes"]}
@@ -379,4 +412,12 @@ def run(targets=None, force=False, replan=False, out=None):
         for title, figures in report["flags"].items():
             print(f"    {title}: {figures}", file=out)
     print(f"  done in {report['seconds']} s", file=out)
+    from . import evidence
+    report.update(command="ingest " + " ".join(str(t) for t in (targets or ["vault/raw"])) + (" --force" if force else ""),
+                  **evidence.stamp())
+    folder = config.EVIDENCE / "ingest"
+    folder.mkdir(parents=True, exist_ok=True)
+    name = time.strftime("ingest-%Y%m%d-%H%M%S") + ("-offline" if not report["internet_reachable"] else "")
+    (folder / f"{name}.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"  report saved to evidence/ingest/{name}.json", file=out)
     return report

@@ -1,0 +1,8 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "wiki",
+  "showInlineTitle": false,
+  "readableLineLength": true,
+  "useMarkdownLinks": false
+}

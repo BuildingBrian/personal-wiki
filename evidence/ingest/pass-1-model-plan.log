@@ -1,0 +1,63 @@
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+INGEST  3 sources in vault/raw
+  S1  raw/Custom LLM README.md  (8168 words)  unchanged
+  S2  raw/Networking Tracker README.md  (4153 words)  unchanged
+  S3  raw/Pac-Man DQN README.md  (3186 words)  unchanged
+  search index rebuilt: 121 passages (no model needed for this step)
+  planning notes for S1 Custom LLM README (22 sections)
+    plan from model: 7 notes in 39.48 s
+  S1 Custom LLM README: 7 notes planned
+    drafted "Building Custom LLM With NanoGPT" in 15.22 s (read 328 tokens, passed 126 words of source)
+    drafted "LLM Results At A Glance" in 26.8 s (read 594 tokens, passed 169 words of source)
+    drafted "LLM Concepts And Mechanisms" in 42.73 s (read 1431 tokens, passed 771 words of source)
+    drafted "Custom LLM Evidence From Network" in 67.44 s (read 1928 tokens, passed 766 words of source)
+    drafted "Custom LLM Language Evals" in 50.49 s (read 1616 tokens, passed 673 words of source)
+    drafted "Custom LLM Chat Interface" in 39.73 s (read 876 tokens, passed 414 words of source)
+    drafted "Custom LLM Lessons Learned" in 54.02 s (read 1335 tokens, passed 786 words of source)
+  planning notes for S2 Networking Tracker README (15 sections)
+    plan from model: 8 notes in 22.31 s
+  S2 Networking Tracker README: 8 notes planned
+    drafted "Networking Tracker Overview" in 15.64 s (read 242 tokens, passed 93 words of source)
+    drafted "Networking Tracker Features" in 27.44 s (read 379 tokens, passed 187 words of source)
+    drafted "Networking Tracker Architecture" in 39.45 s (read 975 tokens, passed 532 words of source)
+    drafted "Networking Tracker Request Flow" in 26.09 s (read 381 tokens, passed 163 words of source)
+    drafted "Networking Tracker Database" in 17.98 s (read 343 tokens, passed 117 words of source)
+    drafted "Networking Tracker Testing" in 37.98 s (read 1168 tokens, passed 533 words of source)
+    drafted "Networking Tracker Deployment" in 50.08 s (read 1673 tokens, passed 688 words of source)
+    drafted "Networking Tracker Limitations" in 24.57 s (read 427 tokens, passed 211 words of source)
+  planning notes for S3 Pac-Man DQN README (11 sections)
+    plan from model: 6 notes in 21.4 s
+  S3 Pac-Man DQN README: 6 notes planned
+    drafted "PacMan DQN Project" in 51.42 s (read 1666 tokens, passed 919 words of source)
+    drafted "Training Results Analysis" in 41.89 s (read 1403 tokens, passed 642 words of source)
+    drafted "Agent Observations And Rewards" in 30.16 s (read 538 tokens, passed 298 words of source)
+    drafted "Experiment Next Steps" in 21.84 s (read 410 tokens, passed 195 words of source)
+    drafted "Initial Expectations" in 38.88 s (read 1087 tokens, passed 633 words of source)
+    drafted "Agent Learning Limitations" in 22.89 s (read 396 tokens, passed 194 words of source)
+  linking 21 notes
+    linked "Building Custom LLM With NanoGPT" to 1 notes in 7.7 s
+    linked "LLM Results At A Glance" to 1 notes in 7.62 s
+    linked "LLM Concepts And Mechanisms" to 4 notes in 11.64 s
+    linked "Custom LLM Evidence From Network" to 4 notes in 10.97 s
+    linked "Custom LLM Language Evals" to 4 notes in 12.27 s
+    linked "Custom LLM Chat Interface" to 1 notes in 10.64 s
+    linked "Custom LLM Lessons Learned" to 1 notes in 11.84 s
+    linked "Networking Tracker Overview" to 4 notes in 9.57 s
+    linked "Networking Tracker Features" to 4 notes in 10.22 s
+    linked "Networking Tracker Architecture" to 4 notes in 11.09 s
+    linked "Networking Tracker Request Flow" to 4 notes in 11.47 s
+    linked "Networking Tracker Database" to 4 notes in 11.09 s
+    linked "Networking Tracker Testing" to 4 notes in 10.02 s
+    linked "Networking Tracker Deployment" to 4 notes in 13.03 s
+    linked "Networking Tracker Limitations" to 1 notes in 12.83 s
+    linked "PacMan DQN Project" to 4 notes in 13.11 s
+    linked "Training Results Analysis" to 4 notes in 14.51 s
+    linked "Agent Observations And Rewards" to 4 notes in 13.86 s
+    linked "Experiment Next Steps" to 4 notes in 13.12 s
+    linked "Initial Expectations" to 4 notes in 12.94 s
+    linked "Agent Learning Limitations" to 4 notes in 14.09 s
+  index.md rebuilt: 21 notes, 3 sources
+
+  created 21 · updated 0 · kept reviewed 0 · already up to date 0
+  notes in vault/wiki: 0 before, 21 after · files outside the plan (duplicates): 0
+  done in 1070.1 s
