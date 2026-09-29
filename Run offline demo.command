@@ -17,14 +17,17 @@ echo " THEN: turn Wi-Fi back ON and press Return here."
 echo "════════════════════════════════════════════════════════════════════════"
 read
 
-# pick up screenshots taken during the run (from the Desktop, where macOS saves them)
+# pick up screenshots taken during the run (from the folder macOS saves them to; Desktop unless changed)
+SHOTDIR=$(defaults read com.apple.screencapture location 2>/dev/null)
+SHOTDIR=${SHOTDIR/#\~/$HOME}
+[ -d "$SHOTDIR" ] || SHOTDIR=$HOME/Desktop
 n=0
-for shot in ~/Desktop/Screenshot*.png(N) ~/Desktop/Screen\ Shot*.png(N); do
+for shot in "$SHOTDIR"/Screenshot*.png(N) "$SHOTDIR"/Screen\ Shot*.png(N); do
   if [ "$(stat -f %m "$shot")" -ge "$START" ]; then
     n=$((n+1)); cp "$shot" "evidence/offline/offline-run-$n.png"; echo "added screenshot: evidence/offline/offline-run-$n.png"
   fi
 done
-[ "$n" -eq 0 ] && echo "No new screenshot found on the Desktop. The text transcript is still saved."
+[ "$n" -eq 0 ] && echo "No new screenshot found in $SHOTDIR. The text transcript is still saved."
 
 echo "Waiting for the network to come back..."
 for i in {1..60}; do
