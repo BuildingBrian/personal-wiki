@@ -1,0 +1,72 @@
+{
+  "S1": {
+    "planned_by": "model",
+    "planned_at": "2026-09-29",
+    "notes": [
+      {
+        "title": "Building Custom LLM With NanoGPT",
+        "folder": "Projects",
+        "units": [
+          1
+        ]
+      },
+      {
+        "title": "LLM Results At A Glance",
+        "folder": "Results",
+        "units": [
+          2
+        ]
+      },
+      {
+        "title": "LLM Concepts And Mechanisms",
+        "folder": "Concepts",
+        "units": [
+          3
+        ]
+      },
+      {
+        "title": "Custom LLM Evidence From Network",
+        "folder": "Results",
+        "units": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      {
+        "title": "Custom LLM Language Evals",
+        "folder": "Results",
+        "units": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          4
+        ]
+      },
+      {
+        "title": "Custom LLM Chat Interface",
+        "folder": "Projects",
+        "units": [
+          18
+        ]
+      },
+      {
+        "title": "Custom LLM Lessons Learned",
+        "folder": "Lessons",
+        "units": [
+          19,
+          20,
+          21,
+          22
+        ]
+      }
+    ]
+  }
+}

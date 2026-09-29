@@ -1,0 +1,34 @@
+{
+  "sources": [
+    {
+      "id": "S1",
+      "name": "Custom LLM README",
+      "path": "raw/Custom LLM README.md",
+      "sha256": "c8971e5d4ef04c14c2695f62f47ed230c63a99f6ab7ba1e5329a69a5cdab1d2f",
+      "added": "2026-09-29",
+      "words": 8168,
+      "original_filename": "README.md",
+      "origin": "github.com/BuildingBrian/custom-llm @ 3854cd2"
+    },
+    {
+      "id": "S2",
+      "name": "Networking Tracker README",
+      "path": "raw/Networking Tracker README.md",
+      "sha256": "791a30402c37434d6851bac8a92224871665b88caa642dd4600d2e458c873eb9",
+      "added": "2026-09-29",
+      "words": 4153,
+      "original_filename": "README.md",
+      "origin": "github.com/BuildingBrian/networking-tracker @ 556f732"
+    },
+    {
+      "id": "S3",
+      "name": "Pac-Man DQN README",
+      "path": "raw/Pac-Man DQN README.md",
+      "sha256": "605a0ab0e419df4d8341a5d3ad5f1d1f774e668782b8b9718c20b59d6a84f3eb",
+      "added": "2026-09-29",
+      "words": 3186,
+      "original_filename": "README.md",
+      "origin": "github.com/BuildingBrian/pacman-dqn @ 4c476c9"
+    }
+  ]
+}
