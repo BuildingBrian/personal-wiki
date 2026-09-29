@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+data/cache/
+data/logs/
+outputs/
+ASSIGNMENT_BRIEF.md
+QUESTLOG.md
+vault/.obsidian/workspace*.json
+vault/.trash/

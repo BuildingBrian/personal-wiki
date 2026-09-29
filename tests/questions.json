@@ -1,0 +1,54 @@
+{
+  "note": "Written and committed BEFORE any retrieval or harness code. This file lives outside vault/ and is never indexed.",
+  "tests": [
+    {
+      "id": "test-1",
+      "kind": "answerable",
+      "design": "Direct question answered by one source.",
+      "question": "What was the mean evaluation score of the Pac-Man agent before and after training?",
+      "expected_source": "vault/raw/Pac-Man DQN README.md",
+      "expected_section": "The five before-and-after scores",
+      "expected_passage_contains": ["492.0", "608.0"],
+      "expected_answer": "Mean of the five fixed evaluation games: 492.0 untrained, 608.0 trained (+116.0)."
+    },
+    {
+      "id": "test-2",
+      "kind": "answerable",
+      "design": "Phrased differently from the source, to see how retrieval handles wording. The source says 'negation', 'failure', 'chose tea, the negated word'; the question says none of those except 'choose'.",
+      "question": "Which skill did my tiny language model fail to pick up, and what wrong word did it choose?",
+      "expected_source": "vault/raw/Custom LLM README.md",
+      "expected_section": "4.3 Reading the results honestly",
+      "expected_passage_contains": ["Negation", "tea"],
+      "expected_answer": "Negation (1 of 3, chance). On the 'ava did not buy tea' case it chose 'tea', the negated word."
+    },
+    {
+      "id": "test-3",
+      "kind": "answerable",
+      "design": "Third source, known supporting evidence in more than one section.",
+      "question": "How does the networking tracker stop one user from reading another user's contacts?",
+      "expected_source": "vault/raw/Networking Tracker README.md",
+      "expected_section": "Authentication and RLS ownership",
+      "expected_passage_contains": ["Row Level Security", "auth.user_id()"],
+      "expected_answer": "Row Level Security inside Postgres: a row is reachable only when auth.user_id() = user_id, enforced by the database rather than application code."
+    },
+    {
+      "id": "test-4",
+      "kind": "unsupported",
+      "design": "Plausible question the sources cannot answer. One source says I am CONSIDERING hardware for training at home; none says I bought anything. The tempting passage will be retrieved, so this tests honesty, not retrieval.",
+      "question": "Which GPU did I buy to train models at home?",
+      "expected_source": null,
+      "expected_passage_contains": [],
+      "expected_answer": "An explicit statement that the sources do not contain this information."
+    }
+  ],
+  "mode_checks": {
+    "chat_capabilities": ["what can we do?", "what can you help me with?"],
+    "chat_followup": ["Draft a short plan for my next Pac-Man experiment.", "make that shorter"],
+    "search": "row level security",
+    "ask_chat_separation": {
+      "chat_only_claim": "For the record, I have decided to name my next project Falcon.",
+      "ask_question": "What name did I decide on for my next project?",
+      "expected": "Insufficient evidence in ask mode, because chat history is not source material."
+    }
+  }
+}
