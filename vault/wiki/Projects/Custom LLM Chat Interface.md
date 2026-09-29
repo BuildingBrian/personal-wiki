@@ -8,27 +8,29 @@ source_sections:
   - "5. Chat interface"
 generated_by: gemma4:e2b Q4_K_M (Ollama 0.20.7, local)
 generated_at: 2026-09-29
-reviewed: false
+reviewed: true
+reviewed_by: Brian Arevalo Ramos, with Claude (AI assistant)
+reviewed_at: 2026-09-29
 ---
 
 # Custom LLM Chat Interface
 
-The chat interface uses the instructor's terminal loop `chat.py` to load weights and vocabulary from `model.pt`. It functions by continuing a prompt rather than answering it, without conversation memory.
+I use the instructor's terminal loop, `chat.py`, as my chat interface to interact with my tiny language model. This model continues a prompt rather than answering it, lacks conversation memory, and reports unknown words.
 
 ## Key details
 
-- The interface uses the instructor's terminal loop `chat.py` to load Experiment 2 weights and vocabulary from `model.pt`.
-- It is a tiny language model that continues a prompt instead of answering it, starting each prompt with a fresh context.
+- The interface is the instructor's terminal loop `chat.py`.
+- It loads my Experiment 2 weights and vocabulary from `model.pt`.
+- The model continues a prompt instead of answering it, starting each prompt with a fresh context.
 - Unknown words are reported and mapped to `<UNK>`.
 - Only the last 48 tokens of a long prompt are used.
 - Generating replies never updates weights or touches the corpus.
-- The launch command is `.venv/bin/python chat.py --model evidence/expanded/model.pt --transcript my_chat.json`.
-- The model identity is `llm_runs/20260922T044308_125561Z` with model sha256 `5593b08e1e84afcc7a136b720178e4af76c4e360032c587074677d9d3066a2a3`.
-- The transcript file is `evidence/expanded/chat_transcript_terminal.json` with temperature 0.8, max 24 tokens, and seeds 2026+turn.
+- I launch it using the command: `.venv/bin/python chat.py --model evidence/expanded/model.pt --transcript my_chat.json`.
 
 ## Related notes
 
-- [[Custom LLM Evidence From Network]] — This document details measurements and observations from the Custom LLM.
+- [[Custom LLM Project]] — Describes the model behind the chat: nanoGPT with a 48-token context and whole-word tokens.
+- [[Sampling Temperature]] — Explains what the temperature setting does when the chat samples each next word.
 
 ## Sources
 

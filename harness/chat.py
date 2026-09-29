@@ -141,19 +141,25 @@ def run(script=None, transcript=None, out=None):
             print(f"\n  {exc}\n", file=out)
             continue
         print(file=out)
-        if hits:
-            cited = sorted({int(n) for group in re.findall(ask.CITATION, reply) for n in re.findall(r"\d+", group)
-                            if 1 <= int(n) <= len(hits)})
-            for n in cited:
-                h = hits[n - 1]
-                print(f"  [{n}] {h['path']}  ›  {h['section']}  (lines {h['lines'][0]}–{h['lines'][1]})", file=out)
-            if not cited:
-                print("  [harness] the reply cites no passage: treat any project fact in it as unverified", file=out)
+        # A follow-up such as "make that shorter" keeps the citations of the reply it reworks, so they are
+        # resolved against the passages of the earlier lookup.
+        carried = not hits and "follow-up" in reason and bool(last_hits)
+        sources = hits or (last_hits if carried else [])
+        cited = sorted({int(n) for group in re.findall(ask.CITATION, reply) for n in re.findall(r"\d+", group)
+                        if 1 <= int(n) <= len(sources)})
+        for n in cited:
+            h = sources[n - 1]
+            print(f"  [{n}] {h['path']}  ›  {h['section']}  (lines {h['lines'][0]}–{h['lines'][1]})"
+                  + ("  (from the earlier lookup)" if carried else ""), file=out)
+        if hits and not cited:
+            print("  [harness] the reply cites no passage: treat any project fact in it as unverified", file=out)
         print(f"  ({stats['wall_seconds']} s)\n", file=out)
         history += [{"role": "user", "content": message}, {"role": "assistant", "content": reply}]
-        last_hits, last_reply = hits or [], reply
+        last_hits, last_reply = sources, reply
         log.append({"you": message, "harness": reason, "reply": reply, "seconds": stats["wall_seconds"],
-                    "passages": [f"{h['path']} › {h['section']}" for h in (hits or [])]})
+                    "passages": [f"{h['path']} › {h['section']}" for h in (hits or [])],
+                    "citations": [f"[{n}] {sources[n - 1]['path']} › {sources[n - 1]['section']}"
+                                  + (" (from the earlier lookup)" if carried else "") for n in cited]})
     if transcript:
         save_transcript(transcript, log)
         print(f"transcript saved to {transcript}", file=out)
@@ -172,7 +178,9 @@ def save_transcript(path, log):
     for turn in log:
         lines += [f"**You:** {turn['you']}", "", f"`harness: {turn['harness']}`", ""]
         for p in turn.get("passages", []):
-            lines.append(f"- passage: `{p}`")
+            lines.append(f"- passage looked up: `{p}`")
+        for c in turn.get("citations", []):
+            lines.append(f"- cited: `{c}`")
         if turn.get("reply"):
             lines += ["", "**Ledger:** " + turn["reply"].replace("\n", "\n\n"), ""]
         if turn.get("seconds"):

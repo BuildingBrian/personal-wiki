@@ -38,6 +38,7 @@ def build_parser():
     p.add_argument("paths", nargs="*", default=[], help="a source file or folder inside vault/raw (default: all)")
     p.add_argument("--force", action="store_true", help="draft notes again even if the source is unchanged")
     p.add_argument("--replan", action="store_true", help="ask the model for a new note plan (changes note names)")
+    p.add_argument("--relink", action="store_true", help="only propose links again for notes not yet reviewed")
     p = sub.add_parser("search", help="show matching original passages (no model)")
     p.add_argument("query")
     p.add_argument("-k", type=int, default=config.TOP_K + 1, help="how many passages to show")
@@ -137,6 +138,13 @@ def main(argv=None):
     try:
         if args.command == "ingest":
             print(model.banner())
+            if args.relink:
+                plan = json.loads(config.PLAN.read_text(encoding="utf-8"))
+                ingest.retire_unplanned(plan, sys.stdout)
+                print("RELINK  notes not yet reviewed")
+                ingest.relink(plan)
+                ingest.write_index(json.loads(config.CATALOG.read_text(encoding="utf-8")), sys.stdout)
+                return 0
             result = ingest.run(args.paths, force=args.force, replan=args.replan)
             return 1 if "error" in result else 0
         if args.command == "search":

@@ -1,0 +1,163 @@
+{
+  "mode": "ask",
+  "question": "Which skill did my tiny language model fail to pick up, and what wrong word did it choose?",
+  "uses_chat_history": false,
+  "retrieval": {
+    "method": "BM25 keyword index over vault/raw",
+    "top_k": 4,
+    "query_terms": [
+      "skill",
+      "tiny",
+      "language",
+      "model",
+      "fail",
+      "pick",
+      "wrong",
+      "word",
+      "choose"
+    ],
+    "terms_not_in_index": [],
+    "passages": [
+      {
+        "rank": 1,
+        "id": "S1-P051",
+        "path": "vault/raw/Custom LLM README.md",
+        "section": "5. Chat interface",
+        "lines": [
+          451,
+          467
+        ],
+        "score": 9.28,
+        "matched_terms": [
+          "tiny",
+          "language",
+          "model",
+          "word"
+        ],
+        "text": "**Interface:** the instructor's terminal loop [`chat.py`](chat.py) (unchanged) loading my Experiment 2 weights and vocabulary\nfrom `model.pt`. It is a tiny language model: it *continues* a prompt rather than answering it, each prompt starts with a fresh\ncontext (no conversation memory), unknown words are reported and mapped to `<UNK>`, and only the last 48 tokens of a long prompt are used.\nGenerating replies never updates weights or touches the corpus.\n\n**Launch (from the repo root, after the setup in section 8):**\n\n```bash\n.venv/bin/python chat.py --model evidence/expanded/model.pt --transcript my_chat.json\n```\n\nType a prompt, press Enter, type `/quit` to exit; the transcript is saved to the named file.\n\n**Model / run identity:** `llm_runs/20260922T044308_125561Z` (Experiment 2, 3,000 steps), model sha256 `5593b08e1e84afcc7a136b720178e4af76c4e360032c587074677d9d3066a2a3`.\n\n**Transcript** ([chat_transcript_terminal.json](evidence/expanded/chat_transcript_terminal.json), temperature 0.8, max 24 tokens, seeds 2026+turn):\n\n| # | Prompt | Model reply | Unknown words |\n|---|---|---|---|"
+      },
+      {
+        "rank": 2,
+        "id": "S1-P045",
+        "path": "vault/raw/Custom LLM README.md",
+        "section": "4. The fixed 48-case language evals > 4.3 Reading the results honestly",
+        "lines": [
+          399,
+          424
+        ],
+        "score": 9.24,
+        "matched_terms": [
+          "language",
+          "model",
+          "pick",
+          "word"
+        ],
+        "text": "she bought milk . ava bought\") → the model\n  chose **tea**, the negated word, i.e. it copied the first noun instead of the corrected one. `lang_31` chose `green`, a colour\n  that never appears in the prompt. Only `lang_33` was right. The free continuations agree it is not a fluke: for `lang_31`\n  it generated \"not grey .\" Given the corpus, the model learned the *shape* \"X is not A . it is B . X is\" but not which of A or B\n  to copy — with only 620 short stories and 2 layers, \"attend back to the word after *it is*\" did not emerge. Section 7 proposes the fix. * **Multiple choice ≠ free text.** `lang_30` (\"the opposite of noisy is\") picks `quiet` correctly among four choices, but its free\n  continuation was \"therapist .\" — a starter word."
+      },
+      {
+        "rank": 3,
+        "id": "S1-P058",
+        "path": "vault/raw/Custom LLM README.md",
+        "section": "7. One limitation and my next experiment",
+        "lines": [
+          519,
+          528
+        ],
+        "score": 8.66,
+        "matched_terms": [
+          "model",
+          "fail",
+          "pick",
+          "word"
+        ],
+        "text": "**Observed limitation.** Negation transfer failed (1/3, chance). The model learned the surface shape of the correction stories but,\nfaced with a new noun, it picked the *negated* word (`tea`) or an unrelated colour (`green`) rather than the corrected one. Copying\nthe right earlier token requires attention to key on the position after \"it is\" / \"she bought\", and 620 stories × 3,000 steps did not\nproduce that. A second, structural limitation: 15 of 48 evals stayed unscorable because the vocabulary is only what the corpus contains.\n\n**Next experiment (one change).** Keep steps, learning rate and the other files fixed, and change only the negation data: roughly\ntriple it (≈2,000 stories) and vary the frames so the correct word is not always in the same position (e.g. \"the cup is blue , not red .\nthe cup is\", \"it is green , not white , so the cup is\"). Prediction: negation rises from 1/3 to 2/3 or 3/3 if the copying pattern is\nlearnable at this size, and stays at chance if the limit is the 2-layer architecture rather than the data. Either outcome is informative;\nthe second would motivate a further experiment with 4 layers."
+      },
+      {
+        "rank": 4,
+        "id": "S1-P031",
+        "path": "vault/raw/Custom LLM README.md",
+        "section": "4. The fixed 48-case language evals > 4.2 All 48 cases",
+        "lines": [
+          341,
+          346
+        ],
+        "score": 8.56,
+        "matched_terms": [
+          "language",
+          "model",
+          "pick",
+          "word"
+        ],
+        "text": "✅/❌ = scored (predicted choice shown); – = unscorable (a prompt or choice word is unknown). Last column is the Experiment 2\ntrained model's *free* continuation, which can differ from its multiple-choice pick. Full per-case data including choice\nprobabilities and unknown words: [Exp 1 untrained](evidence/starter/language_evals/untrained/eval_results.csv) · [Exp 1 final](evidence/starter/language_evals/final/eval_results.csv) · [Exp 2 untrained](evidence/expanded/language_evals/untrained/eval_results.csv) · [Exp 2 final](evidence/expanded/language_evals/final/eval_results.csv).\n\n| id | category | prompt | answer | E1 untrained | E1 trained | E2 untrained | E2 trained | E2 trained free continuation |\n|---|---|---|---|---|---|---|---|---|"
+      }
+    ]
+  },
+  "status": "answered",
+  "reason": null,
+  "raw_model_reply": "Negation transfer failed [3]. The model chose the negated word, \"tea,\" instead of the corrected one, and in another instance, it chose the color \"green\" [3].",
+  "answer": "Negation transfer failed [3]. The model chose the negated word, \"tea,\" instead of the corrected one, and in another instance, it chose the color \"green\" [3].",
+  "citation_check": {
+    "cited": [
+      3
+    ],
+    "valid_citations": [
+      3
+    ],
+    "invalid_citations": [],
+    "figures_in_answer": [],
+    "figures_not_in_cited_passages": []
+  },
+  "model_stats": {
+    "purpose": "ask",
+    "wall_seconds": 30.94,
+    "load_seconds": 0.29,
+    "prompt_tokens": 1491,
+    "output_tokens": 39,
+    "prompt_tokens_per_s": 53.4,
+    "output_tokens_per_s": 14.7
+  },
+  "recorded_at": "2026-09-29 10:44:22 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "On",
+    "default_route": true,
+    "outside_host_answered": true,
+    "offline": false
+  },
+  "internet_reachable": true,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": 7.68,
+    "in_gpu_gb": 0.0,
+    "processor": "100% CPU"
+  },
+  "test": {
+    "id": "test-2",
+    "kind": "answerable",
+    "design": "Phrased differently from the source, to see how retrieval handles wording. The source says 'negation', 'failure', 'chose tea, the negated word'; the question says none of those except 'choose'.",
+    "question": "Which skill did my tiny language model fail to pick up, and what wrong word did it choose?",
+    "expected_source": "vault/raw/Custom LLM README.md",
+    "expected_section": "4.3 Reading the results honestly",
+    "expected_passage_contains": [
+      "Negation",
+      "tea"
+    ],
+    "expected_answer": "Negation (1 of 3, chance). On the 'ava did not buy tea' case it chose 'tea', the negated word."
+  },
+  "expected_passage_rank": [
+    3
+  ]
+}

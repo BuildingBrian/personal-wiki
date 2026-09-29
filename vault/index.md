@@ -2,48 +2,49 @@
 
 This wiki is my memory of the projects I built in MBA 290T: what I built, what I measured, what failed, and what I said I would try next. Notes are drafted by a local Gemma model from my own write-ups and reviewed by me against the originals. Every note links back to the passage it came from.
 
-21 notes from 3 sources. Start with a topic below, open a note, then follow its **Sources** link to the original passage.
+22 notes from 3 sources. Start with a topic below, open a note, then follow its **Sources** link to the original passage.
 
 ## Projects
 
 What each project is and how it was built.
 
-- [[Building Custom LLM With NanoGPT]] — This document details the process of building a custom Large Language Model using nanoGPT.
-- [[Custom LLM Chat Interface]] — The chat interface uses the instructor's terminal loop `chat.py` to load weights and vocabulary from `model.pt`.
-- [[Networking Tracker Architecture]] — The architecture separates the frontend (React client components) from the backend (Next.js Route Handlers) which interact with the database.
-- [[Networking Tracker Database]] — This document describes the database schema for the Networking Tracker.
-- [[Networking Tracker Deployment]] — This document details the production verification and deployment process for the Networking Tracker application.
-- [[Networking Tracker Features]] — The Networking Tracker features include secure authentication, a private contact list, detailed contact management, and robust sorting and filtering capabilities.
-- [[Networking Tracker Overview]] — The Networking Tracker is a private, per-user networking tracker for people at Berkeley.
-- [[Networking Tracker Request Flow]] — This document outlines the end-to-end request flow for adding, reading, updating, and deleting contacts.
-- [[Networking Tracker Testing]] — The project has two test suites, totaling 25 tests, which are executed via `npm test`.
+- [[Custom LLM Chat Interface]] — I use the instructor's terminal loop, `chat.py`, as my chat interface to interact with my tiny language model.
+- [[Custom LLM Project]] — I trained Andrej Karpathy's nanoGPT twice on my Intel MacBook's CPU for an assignment.
+- [[Custom LLM Training Choices]] — I made three choices before training: the corpus, 3,000 training steps and a learning rate of 0.001.
+- [[Networking Tracker Architecture]] — I designed a networking tracker using a Next.js stack to keep the frontend and backend in one repository.
+- [[Networking Tracker Deployment]] — I outline the steps I take to deploy the Networking Tracker.
+- [[Networking Tracker Overview]] — I have created a private, per-user networking tracker for people I want to stay connected with at Berkeley.
+- [[Pac-Man DQN Project]] — I trained a Deep Q-Network (DQN) on `ALE/MsPacman-v5` for a class assignment.
+- [[Pac-Man Training Choices]] — I made three specific choices for my Pac-Man training: Exploration, Episodes, and Learning rate.
 
 ## Results
 
 What was measured, with the numbers.
 
-- [[Custom LLM Evidence From Network]] — This document details various measurements and observations from a Custom LLM, including loss curves, sample generation, token-to-ID mapping, weight updates, next-token probabilities, attention patterns, and temperature effects.
-- [[Custom LLM Language Evals]] — The system uses fixed 48-case language evaluations where each case consists of a prompt, four single-word choices, and one answer.
-- [[Initial Expectations]] — The initial expectations were based on a 5-episode setup check and predictions about the learning process.
-- [[LLM Results At A Glance]] — This table provides a glance at the results from different experiments involving language evaluations.
-- [[Training Results Analysis]] — The training process involved 500 completed games and resulted in an average score increase of 116.0 across five seeds.
+- [[Custom LLM Eval Results]] — I ran the same fixed 48-case eval suite before and after training in both experiments.
+- [[Custom LLM Training Evidence]] — I have documented evidence regarding my custom LLM training, focusing on loss curves, weight updates, and next-token probabilities.
+- [[Networking Tracker Testing]] — I have conducted testing on my networking tracker, involving two test suites and production verification.
+- [[Pac-Man Gameplay Progress]] — Every 25 training games the notebook recorded one full game on seed 101.
+- [[Pac-Man Training Results]] — I completed all 500 requested training games in 79 minutes on CPU.
 
 ## Concepts
 
 Ideas and mechanisms the projects rely on.
 
-- [[Agent Observations And Rewards]] — The agent observes four game screens, takes joystick moves, and is rewarded based on changes in game score.
-- [[LLM Concepts And Mechanisms]] — The text describes two experiments involving different corpora to train a model, focusing on word associations, categories, and negation.
-- [[PacMan DQN Project]] — The PacMan DQN project involved training an agent using specific settings and observed limitations regarding learning ghosts and memory.
+- [[Eval Leakage Policy]] — I implemented a policy to prevent leakage of evaluation material into my training data.
+- [[Row Level Security]] — I implement Row Level Security (RLS) on the `contacts` table to control row access based on user authentication.
+- [[Sampling Temperature]] — I experimented with three different temperatures for inference, keeping the model, start token, and seed the same.
+- [[Tokens And Embeddings]] — I use a process to convert one word from text into an ID and then into a 64-number vector.
 
 ## Lessons
 
 What failed, what I learned, and what I would try next.
 
-- [[Agent Learning Limitations]] — The agent failed to learn to avoid ghosts, and the training process showed unstable results.
-- [[Custom LLM Lessons Learned]] — The custom LLM learned to associate word relationships and template shapes rather than memorizing specific sentences or facts.
-- [[Experiment Next Steps]] — The next experiment involves changing exactly one setting to test the effect of replay capacity.
-- [[Networking Tracker Limitations]] — The Networking Tracker has several known limitations that could be improved.
+- [[Custom LLM Lessons Learned]] — I learned about the components and processes involved in training my custom LLM.
+- [[Negation Failure]] — Negation transfer failed, resulting in a success rate of 1/3, which is equivalent to chance.
+- [[Networking Tracker Limitations]] — I have identified several known limitations in my Networking Tracker.
+- [[Next Steps And Hardware]] — I plan to continue experimenting with this notebook and expand my work into visual learning models.
+- [[Pac-Man Agent Limitation]] — I observed that the agent did not learn to avoid ghosts, and 500 games with a 5,000-decision memory were insufficient for learning.
 
 ## Source catalog
 

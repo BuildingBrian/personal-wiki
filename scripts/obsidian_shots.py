@@ -5,7 +5,7 @@ interface, which can run Obsidian's own commands (open a note, open the graph) a
 itself to a PNG. The pictures are Obsidian's real window contents, not a mock-up.
 
 Start Obsidian:   /Applications/Obsidian.app/Contents/MacOS/Obsidian --remote-debugging-port=9222 &
-Then run:         python scripts/obsidian_shots.py "<note title>"
+Then run:         python scripts/obsidian_shots.py "<note path>" "<related note title>" "<Source#Heading>"
 Needs the 'tornado' package (any Jupyter environment has it).
 """
 import asyncio
@@ -58,24 +58,37 @@ await app.commands.executeCommandById('file-explorer:open');
 const explorer = app.workspace.getLeavesOfType('file-explorer')[0];
 if (explorer && explorer.view.tree && explorer.view.tree.setCollapseAll) explorer.view.tree.setCollapseAll(false);
 """
-OPEN = """
-for (const leaf of app.workspace.getLeavesOfType('graph')) leaf.detach();
-const wanted = %s;
-const file = app.vault.getAbstractFileByPath(wanted) || app.metadataCache.getFirstLinkpathDest(wanted, '');
-if (!file) return 'NOT FOUND: ' + wanted;
-await app.workspace.getLeaf(false).openFile(file);
-const leaf = app.workspace.getMostRecentLeaf();
-const state = leaf.getViewState();
-state.state = Object.assign({}, state.state, {mode: 'preview'});
-await leaf.setViewState(state);
-return leaf.view.file ? leaf.view.file.path : null;
+SHOW = """
+// Open a file in the main tab, in reading view (or live preview for long originals), optionally at a heading.
+const link = %s, source = %s, mode = %s;
+const [name, heading] = link.split('#');
+const file = app.vault.getAbstractFileByPath(name) || app.metadataCache.getFirstLinkpathDest(name, source);
+if (!file) return 'NOT FOUND: ' + link;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const leaf = app.workspace.getMostRecentLeaf(app.workspace.rootSplit) || app.workspace.getLeaf(true);
+await leaf.openFile(file, {state: {mode: mode, source: false}, eState: heading ? {subpath: '#' + heading} : {}});
+app.workspace.setActiveLeaf(leaf, {focus: true});
+await sleep(2500);
+if (heading) { leaf.view.setEphemeralState({subpath: '#' + heading}); await sleep(3000); }
+const seen = leaf.view.containerEl.innerText.replace(/\\s+/g, ' ').trim();
+return file.path + (heading ? '#' + heading : '') + '  [' + seen.length + ' characters visible]';
 """
 GRAPH = """
+const plugin = app.internalPlugins.plugins.graph.instance;
+Object.assign(plugin.options, {search: 'path:wiki/', showAttachments: false, showTags: false, showOrphans: true,
+                               textFadeMultiplier: -3, nodeSizeMultiplier: 1.5, linkDistance: 260, repelStrength: 16,
+                               'collapse-filter': false, 'collapse-color-groups': false, 'collapse-display': true});
 await app.commands.executeCommandById('graph:open');
-await new Promise(r => setTimeout(r, 6000));
+await new Promise(r => setTimeout(r, 7000));
 const leaf = app.workspace.getLeavesOfType('graph')[0];
-return leaf ? JSON.stringify({filter: leaf.view.dataEngine ? leaf.view.dataEngine.getOptions().search : null,
-                              nodes: leaf.view.renderer && leaf.view.renderer.nodes ? leaf.view.renderer.nodes.length : null}) : null;
+if (!leaf) return null;
+const renderer = leaf.view.renderer;
+renderer.zoomTo(0.78);
+await new Promise(r => setTimeout(r, 2000));
+renderer.setPan(renderer.panX - 330, renderer.panY + 40);      // keep the graph clear of the filter panel
+await new Promise(r => setTimeout(r, 2000));
+return JSON.stringify({filter: leaf.view.dataEngine.getOptions().search, attachments: leaf.view.dataEngine.getOptions().showAttachments,
+                       nodes: Object.keys(leaf.view.renderer.nodeLookup || {}).length || (leaf.view.renderer.nodes || []).length});
 """
 
 
@@ -88,25 +101,39 @@ return JSON.stringify(out);
 """
 
 
-async def main(note):
+async def main(note, related, source_link):
     targets = json.load(urllib.request.urlopen(f"http://127.0.0.1:{PORT}/json", timeout=5))
     target = next(t for t in targets if t["type"] == "page" and "obsidian.md" in t["url"])
     page = Page(await websocket_connect(target["webSocketDebuggerUrl"], max_message_size=200 * 1024 * 1024))
-    await page.call("Emulation.setDeviceMetricsOverride", width=1500, height=1500, deviceScaleFactor=2, mobile=False)
+    tall = dict(width=1500, height=1560, deviceScaleFactor=2, mobile=False)
+    wide = dict(width=1500, height=1000, deviceScaleFactor=2, mobile=False)
+
+    async def capture(name, size, link, source="", mode="preview"):
+        await page.call("Emulation.setDeviceMetricsOverride", **size)
+        print("opened:", await page.js(SHOW % (json.dumps(link), json.dumps(source), json.dumps(mode))))
+        await page.call("Page.bringToFront")
+        await asyncio.sleep(1.5)
+        await page.shot(name)
+
     print("vault:", await page.js("return app.vault.getName() + ' · ' + app.vault.getMarkdownFiles().length + ' markdown files'"))
     await page.js(SETUP)
-    print("opened:", await page.js(OPEN % json.dumps(note)))
-    await asyncio.sleep(2)
-    await page.shot("1-open-note-with-sources.png")
-    print("opened:", await page.js(OPEN % json.dumps("index.md")))
-    await asyncio.sleep(2)
-    await page.shot("2-index-and-page-list.png")
-    await page.call("Emulation.setDeviceMetricsOverride", width=1500, height=1000, deviceScaleFactor=2, mobile=False)
-    print("unresolved links inside wiki/ and index.md, as Obsidian sees them:", await page.js(UNRESOLVED))
+    await capture("1-open-note-with-sources.png", tall, note)
+    await capture("2-index-and-page-list.png", tall, "index.md")
+    unresolved = await page.js(UNRESOLVED)
+    print("unresolved links inside wiki/ and index.md, as Obsidian sees them:", unresolved)
+    (OUT / "obsidian-unresolved-links.json").write_text(unresolved + "\n", encoding="utf-8")
+    if related:
+        await capture("4-related-note.png", tall, related, note)
+    if source_link:
+        await capture("5-original-source-passage.png", wide, source_link, related or note, "source")
+    await page.call("Emulation.setDeviceMetricsOverride", **wide)
     print("graph:", await page.js(GRAPH))
+    await page.call("Page.bringToFront")
+    await asyncio.sleep(1.5)
     await page.shot("3-graph-view.png")
     await page.call("Emulation.clearDeviceMetricsOverride")
 
 
 if __name__ == "__main__":
-    asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else "index"))
+    args = sys.argv[1:] + [None, None, None]
+    asyncio.run(main(args[0] or "index.md", args[1], args[2]))

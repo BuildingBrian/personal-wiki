@@ -1,0 +1,25 @@
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+RELINK  notes not yet reviewed
+    linked "Custom LLM Project" to 3 of 3 candidates in 16.4 s
+    linked "Custom LLM Training Choices" to 3 of 3 candidates in 17.9 s
+    linked "Custom LLM Chat Interface" to 2 of 2 candidates in 12.1 s
+    linked "Custom LLM Eval Results" to 3 of 3 candidates in 17.4 s
+    linked "Custom LLM Training Evidence" to 3 of 3 candidates in 19.5 s
+    linked "Tokens And Embeddings" to 3 of 3 candidates in 18.6 s
+    linked "Sampling Temperature" to 0 of 0 candidates in 0.0 s
+    linked "Eval Leakage Policy" to 2 of 2 candidates in 12.6 s
+    linked "Negation Failure" to 3 of 3 candidates in 19.1 s
+    linked "Custom LLM Lessons Learned" to 3 of 3 candidates in 17.7 s
+    linked "Next Steps And Hardware" to 3 of 3 candidates in 20.6 s
+    linked "Networking Tracker Overview" to 2 of 2 candidates in 12.5 s
+    linked "Networking Tracker Architecture" to 2 of 2 candidates in 10.9 s
+    linked "Networking Tracker Deployment" to 2 of 2 candidates in 10.9 s
+    linked "Row Level Security" to 3 of 3 candidates in 17.3 s
+    linked "Networking Tracker Testing" to 3 of 3 candidates in 16.3 s
+    linked "Networking Tracker Limitations" to 3 of 3 candidates in 17.0 s
+    linked "Pac-Man DQN Project" to 3 of 3 candidates in 17.9 s
+    linked "Pac-Man Training Choices" to 3 of 3 candidates in 18.8 s
+    linked "Pac-Man Training Results" to 3 of 3 candidates in 21.2 s
+    linked "Pac-Man Gameplay Progress" to 3 of 3 candidates in 18.2 s
+    linked "Pac-Man Agent Limitation" to 3 of 3 candidates in 19.2 s
+  index.md rebuilt: 22 notes, 3 sources

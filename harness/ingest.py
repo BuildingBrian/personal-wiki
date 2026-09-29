@@ -18,6 +18,8 @@ SKIP = re.compile(r"table of contents|^screenshots?$|licen[sc]e|acknowledg|evide
 INTRO = ("This wiki is my memory of the projects I built in MBA 290T: what I built, what I measured, what failed, and "
          "what I said I would try next. Notes are drafted by a local Gemma model from my own write-ups and reviewed "
          "by me against the originals. Every note links back to the passage it came from.")
+LINK_SIMILARITY = 0.17          # cosine similarity of two notes' terms; below this no link is proposed
+CROSS_SIMILARITY = 0.10         # lower bar for a note from a different source, so projects connect to each other
 FOLDER_BLURB = {"Projects": "What each project is and how it was built.",
                 "Results": "What was measured, with the numbers.",
                 "Concepts": "Ideas and mechanisms the projects rely on.",
@@ -246,29 +248,68 @@ def similar(a, b):
     return top / (math.sqrt(sum(v * v for v in a.values())) * math.sqrt(sum(v * v for v in b.values())) or 1)
 
 
-def link_reasons(title, summary, candidates, out):
-    listing = "\n".join(f"{n}. \"{c['title']}\": {c['summary']}" for n, c in enumerate(candidates, 1))
-    prompt = (f"Current wiki note \"{title}\": {summary}\n\nCandidate related notes:\n{listing}\n\n"
-              "For each candidate that is genuinely connected to the current note, write one line in this form:\n"
-              "<number> | <one short sentence saying how it connects>\n"
-              "Skip candidates that are not connected. Write nothing else.")
-    reply, stats = model.chat([{"role": "user", "content": prompt}], max_tokens=150, temperature=0.2, purpose="ingest-links")
-    related = []
-    for line in reply.splitlines():
-        match = re.match(r"\s*(\d+)\s*\|\s*(.+)", line)
-        if match and 1 <= int(match.group(1)) <= len(candidates):
-            reason = match.group(2).strip().rstrip(".") + "."
-            related.append({"title": candidates[int(match.group(1)) - 1]["title"], "reason": reason})
-    print(f"    linked \"{title}\" to {len(related)} notes in {stats['wall_seconds']} s", file=out)
-    return related
+def link_reason(current, candidate):
+    """One focused question per pair of notes. Returns a sentence, or None if the model sees no connection."""
+    prompt = ("Two notes from my personal wiki.\n\n"
+              f"Note A, \"{current['title']}\": {current['summary']}\n\n"
+              f"Note B, \"{candidate['title']}\": {candidate['summary']} "
+              f"Details of B: {' '.join(candidate['details'][:3])}\n\n"
+              "A reader has just finished Note A. In ONE sentence of at most 22 words, say what they will find in "
+              "Note B that adds to Note A. Start with a verb such as Shows, Explains, Lists, Gives or Describes. "
+              "Write about the content of Note B only, and do not mention the words \"Note A\" or \"Note B\". "
+              "If Note B has nothing to do with Note A, reply with the single word NONE.")
+    reply, stats = model.chat([{"role": "user", "content": prompt}], max_tokens=60, temperature=0.2, purpose="ingest-links")
+    reply = re.sub(r"\s+", " ", reply).strip().strip('"')
+    if not reply or reply.upper().startswith("NONE"):
+        return None, stats
+    return reply.rstrip(".") + ".", stats
 
 
 def read_note(path):
     text = path.read_text(encoding="utf-8")
-    body = text.split("---", 2)[2] if text.startswith("---") else text
+    head, body = (text.split("---", 2)[1], text.split("---", 2)[2]) if text.startswith("---") else ("", text)
     match = re.search(r"^# .+?\n+(.+?)(?=\n## |\Z)", body.strip(), re.S | re.M)
     summary = re.sub(r"\s+", " ", match.group(1)).strip() if match else ""
-    return {"title": path.stem, "folder": path.parent.name, "summary": summary, "text": body}
+    details = re.search(r"## Key details\n+(.+?)(?=\n## |\Z)", body, re.S)
+    bullets = [l[2:].strip() for l in (details.group(1) if details else "").splitlines() if l.startswith("- ")]
+    source = re.search(r"^source_id:\s*(\S+)", head, re.M)
+    content = (summary + " " + " ".join(bullets)) * 1
+    return {"title": path.stem, "folder": path.parent.name, "summary": summary, "details": bullets,
+            "source": source.group(1) if source else "", "text": content, "path": path}
+
+
+def relink(plan, titles=None, out=None):
+    """Propose links between notes and ask the model for the reason behind each one.
+    Candidates come from term similarity: at most two notes from the same source and one from another source,
+    so projects are connected to each other and not only to themselves. Reviewed notes are left alone."""
+    out = out or sys.stdout
+    notes = [read_note(note_path(n)) for p in plan.values() for n in p["notes"] if note_path(n).exists()]
+    vectors = {n["title"]: Counter(terms(n["title"] + " " + n["text"])) for n in notes}
+    done = []
+    for note in notes:
+        if titles is not None and note["title"] not in titles:
+            continue
+        if is_reviewed(note["path"]):
+            continue
+        scored = sorted(((similar(vectors[note["title"]], vectors[o["title"]]), o) for o in notes
+                         if o["title"] != note["title"]), key=lambda pair: -pair[0])
+        same = [o for sim, o in scored if o["source"] == note["source"] and sim > LINK_SIMILARITY][:2]
+        cross = [o for sim, o in scored if o["source"] != note["source"] and sim > CROSS_SIMILARITY][:1]
+        related, seconds = [], 0.0
+        for candidate in same + cross:
+            reason, stats = link_reason(note, candidate)
+            seconds += stats["wall_seconds"]
+            if reason:
+                related.append({"title": candidate["title"], "reason": reason})
+        lines = [f"- [[{r['title']}]] — {r['reason']}" for r in related] or ["- (none)"]
+        text = note["path"].read_text(encoding="utf-8")
+        text = re.sub(r"(## Related notes\n\n).*?(\n\n## Sources)", lambda m: m.group(1) + "\n".join(lines) + m.group(2),
+                      text, count=1, flags=re.S)
+        note["path"].write_text(text, encoding="utf-8")
+        done.append(note["title"])
+        print(f"    linked \"{note['title']}\" to {len(related)} of {len(same) + len(cross)} candidates "
+              f"in {round(seconds, 1)} s", file=out)
+    return done
 
 
 def write_index(catalog, out):
@@ -386,18 +427,11 @@ def run(targets=None, force=False, replan=False, out=None):
             path.write_text(page, encoding="utf-8")
             touched.append((note, entry, by_number, content))
 
-    if touched:
-        everything = [read_note(p) for p in config.WIKI.rglob("*.md")]
-        vectors = {n["title"]: Counter(terms(n["title"] + " " + n["text"])) for n in everything}
-        print(f"  linking {len(touched)} notes", file=out)
-        for note, entry, by_number, content in touched:
-            ranked = sorted((n for n in everything if n["title"] != note["title"]),
-                            key=lambda n: -similar(vectors[note["title"]], vectors[n["title"]]))
-            candidates = [n for n in ranked if similar(vectors[note["title"]], vectors[n["title"]]) > 0.08][:4]
-            related = link_reasons(note["title"], content["summary"], candidates, out)[:3] if candidates else []
-            note_path(note).write_text(render(note, entry, by_number, content, related, ident), encoding="utf-8")
-
     report["retired"] = retire_unplanned(plan, out)
+    if touched:
+        print(f"  linking {len(touched)} notes", file=out)
+        relink(plan, {note["title"] for note, _, _, _ in touched}, out)
+
     write_index(catalog, out)
     after = {p.relative_to(config.VAULT).as_posix() for p in config.WIKI.rglob("*.md")}
     planned = {note_path(n).relative_to(config.VAULT).as_posix() for p in plan.values() for n in p["notes"]}

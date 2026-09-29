@@ -17,11 +17,11 @@ if [[ "$WIFI" == *"On"* || "$ROUTE" != "0" ]] && [[ "$1" != "--rehearsal" ]]; th
   echo "To practise while online:  scripts/offline_demo.sh --rehearsal   (saved separately, never as offline evidence)"
   exit 1
 fi
-[[ "$1" == "--rehearsal" ]] && OUT=evidence/rehearsal-online && mkdir -p "$OUT"
+[[ "$1" == "--rehearsal" ]] && OUT=evidence/online && mkdir -p "$OUT"
 
 {
-  echo "OFFLINE DEMONSTRATION   $(date '+%Y-%m-%d %H:%M:%S %Z')"
-  [[ "$1" == "--rehearsal" ]] && echo "*** REHEARSAL WHILE ONLINE: this is NOT offline evidence ***"
+  echo "DEMONSTRATION   $(date '+%Y-%m-%d %H:%M:%S %Z')"
+  [[ "$1" == "--rehearsal" ]] && echo "*** RUN WHILE ONLINE (rehearsal of the same script): this is NOT offline evidence ***"
   echo
   echo "##### 0. Network state, from the operating system"
   networksetup -getairportpower en0
@@ -46,6 +46,6 @@ fi
   echo
   echo "FINISHED   $(date '+%Y-%m-%d %H:%M:%S %Z')"
   echo "network at the end: $(networksetup -getairportpower en0)"
-} 2>&1 | tee "$OUT/offline-session.txt"
+} 2>&1 | tee "$OUT/session.txt"
 echo
 echo "Saved to $OUT/. You can turn Wi-Fi back on now."

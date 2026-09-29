@@ -1,0 +1,15 @@
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+INGEST  3 sources in vault/raw
+  S1  raw/Custom LLM README.md  (8168 words)  unchanged
+  S2  raw/Networking Tracker README.md  (4153 words)  unchanged
+  S3  raw/Pac-Man DQN README.md  (3186 words)  unchanged
+  search index rebuilt: 121 passages (no model needed for this step)
+  S1 Custom LLM README: 11 notes planned
+  S2 Networking Tracker README: 6 notes planned
+  S3 Pac-Man DQN README: 5 notes planned
+  index.md rebuilt: 22 notes, 3 sources
+
+  created 0 · updated 0 · kept reviewed 0 · already up to date 22
+  notes in vault/wiki: 22 before, 22 after · files outside the plan (duplicates): 0
+  done in 0.3 s
+  report saved to evidence/ingest/ingest-20260929-103923.json

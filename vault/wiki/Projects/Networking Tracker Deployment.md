@@ -5,36 +5,38 @@ source_id: S2
 source_file: raw/Networking Tracker README.md
 source_sha256: 791a30402c37434d
 source_sections:
-  - "Production verification"
   - "Deployment"
+  - "Environment variables"
 generated_by: gemma4:e2b Q4_K_M (Ollama 0.20.7, local)
 generated_at: 2026-09-29
-reviewed: false
+reviewed: true
+reviewed_by: Brian Arevalo Ramos, with Claude (AI assistant)
+reviewed_at: 2026-09-29
 ---
 
 # Networking Tracker Deployment
 
-This document details the production verification and deployment process for the Networking Tracker application. It outlines the steps for deploying the application and testing its security and functionality.
+I outline the steps I take to deploy the Networking Tracker. This process involves pushing to GitHub, using Vercel, setting environment variables, and configuring domain trust.
 
 ## Key details
 
-- Deployment `dpl_…ado1a7ss5` serves `https://networking-tracker-gules.vercel.app`.
-- The black-box lifecycle verification passed 16 tests, with 0 failures.
-- Two-account privacy tests against production passed, with 1 test file passing.
-- The deployment process involves pushing to GitHub and using `vercel login` and `vercel link`.
-- Production environment variables are added via `vercel env add` commands.
-- The public production domain registered is `networking-tracker-gules.vercel.app`.
-- The deployment process requires adding the deployed domain to Neon Auth's trusted origins.
+- I push the repository to GitHub.
+- I use `vercel login` and then `vercel link` from the repo root.
+- I add production environment variables via the Vercel settings or using specific commands.
+- I use commands to add `NEXT_PUBLIC_NEON_AUTH_URL` and `NEXT_PUBLIC_NEON_DATA_API_URL` as public.
+- I use `printf` to add `NEON_AUTH_BASE_URL` and `NEON_AUTH_COOKIE_SECRET` as sensitive.
+- I run `vercel --prod` to deploy.
+- I add the public production domain `networking-tracker-gules.vercel.app` to Neon Auth's trusted origins.
+- I can automate testing by setting `TEST_APP_URL=https://<your-app>.vercel.app` and running `npm test`.
 
 ## Related notes
 
-- [[Networking Tracker Overview]] — This note details the deployment and testing process for the Networking Tracker application.
-- [[Networking Tracker Testing]] — This note describes the testing process for the Networking Tracker application.
-- [[Networking Tracker Limitations]] — This note lists the known limitations of the Networking Tracker application.
+- [[Networking Tracker Architecture]] — Describes the stack being deployed: Next.js on Vercel with Neon Postgres and Neon Auth.
+- [[Networking Tracker Testing]] — Shows testing details including input validation and two-account privacy proofs for the deployed application.
 
 ## Sources
 
-- [[Networking Tracker README#Production verification|Networking Tracker README § Production verification]] · source S2 · lines 349–390
 - [[Networking Tracker README#Deployment|Networking Tracker README § Deployment]] · source S2 · lines 398–420
+- [[Networking Tracker README#Environment variables|Networking Tracker README § Environment variables]] · source S2 · lines 186–196
 
 Original file: `vault/raw/Networking Tracker README.md` (unchanged; SHA-256 `791a30402c37434d…`)

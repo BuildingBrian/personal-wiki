@@ -1,0 +1,75 @@
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+INGEST  3 sources in vault/raw
+  S1  raw/Custom LLM README.md  (8168 words)  unchanged
+  S2  raw/Networking Tracker README.md  (4153 words)  unchanged
+  S3  raw/Pac-Man DQN README.md  (3186 words)  unchanged
+  search index rebuilt: 121 passages (no model needed for this step)
+  S1 Custom LLM README: 11 notes planned
+    drafted "Custom LLM Project" in 30.02 s (read 820 tokens, passed 304 words of source)
+    drafted "Custom LLM Training Choices" in 45.65 s (read 1468 tokens, passed 771 words of source)
+    drafted "Custom LLM Chat Interface" in 32.76 s (read 913 tokens, passed 414 words of source)
+    drafted "Custom LLM Eval Results" in 37.38 s (read 1105 tokens, passed 358 words of source)
+    drafted "Custom LLM Training Evidence" in 44.41 s (read 1179 tokens, passed 441 words of source)
+    drafted "Tokens And Embeddings" in 72.57 s (read 2250 tokens, passed 506 words of source)
+    drafted "Sampling Temperature" in 19.63 s (read 495 tokens, passed 255 words of source)
+    drafted "Eval Leakage Policy" in 33.01 s (read 935 tokens, passed 468 words of source)
+    drafted "Negation Failure" in 39.55 s (read 1167 tokens, passed 659 words of source)
+    drafted "Custom LLM Lessons Learned" in 44.27 s (read 915 tokens, passed 511 words of source)
+    drafted "Next Steps And Hardware" in 27.89 s (read 705 tokens, passed 413 words of source)
+  S2 Networking Tracker README: 6 notes planned
+    drafted "Networking Tracker Overview" in 27.59 s (read 560 tokens, passed 280 words of source)
+    drafted "Networking Tracker Architecture" in 57.7 s (read 1189 tokens, passed 626 words of source)
+    drafted "Networking Tracker Deployment" in 47.13 s (read 910 tokens, passed 403 words of source)
+    drafted "Row Level Security" in 56.73 s (read 974 tokens, passed 431 words of source)
+    drafted "Networking Tracker Testing" in 1316.67 s (read 1399 tokens, passed 664 words of source)
+    drafted "Networking Tracker Limitations" in 29.76 s (read 464 tokens, passed 211 words of source)
+  S3 Pac-Man DQN README: 5 notes planned
+    drafted "Pac-Man DQN Project" in 38.68 s (read 935 tokens, passed 440 words of source)
+    drafted "Pac-Man Training Choices" in 39.23 s (read 1127 tokens, passed 633 words of source)
+    drafted "Pac-Man Training Results" in 39.02 s (read 1093 tokens, passed 508 words of source)
+    drafted "Pac-Man Gameplay Progress" in 56.72 s (read 1503 tokens, passed 548 words of source)
+    drafted "Pac-Man Agent Limitation" in 29.57 s (read 745 tokens, passed 389 words of source)
+  linking 22 notes
+    linked "Custom LLM Project" to 3 notes in 11.99 s
+    linked "Custom LLM Training Choices" to 2 notes in 7.4 s
+    linked "Custom LLM Chat Interface" to 1 notes in 7.71 s
+    linked "Custom LLM Eval Results" to 3 notes in 9.42 s
+    linked "Custom LLM Training Evidence" to 3 notes in 10.81 s
+    linked "Tokens And Embeddings" to 1 notes in 8.83 s
+    linked "Sampling Temperature" to 1 notes in 7.61 s
+    linked "Eval Leakage Policy" to 3 notes in 11.45 s
+    linked "Negation Failure" to 1 notes in 9.31 s
+    linked "Custom LLM Lessons Learned" to 3 notes in 10.22 s
+    linked "Next Steps And Hardware" to 3 notes in 10.36 s
+    linked "Networking Tracker Overview" to 3 notes in 7.91 s
+    linked "Networking Tracker Architecture" to 3 notes in 8.05 s
+    linked "Networking Tracker Deployment" to 3 notes in 9.73 s
+    linked "Row Level Security" to 3 notes in 9.32 s
+    linked "Networking Tracker Testing" to 3 notes in 8.39 s
+    linked "Networking Tracker Limitations" to 3 notes in 8.72 s
+    linked "Pac-Man DQN Project" to 3 notes in 8.32 s
+    linked "Pac-Man Training Choices" to 3 notes in 8.76 s
+    linked "Pac-Man Training Results" to 3 notes in 8.4 s
+    linked "Pac-Man Gameplay Progress" to 3 notes in 7.97 s
+    linked "Pac-Man Agent Limitation" to 3 notes in 10.78 s
+  retired wiki/Concepts/Agent Observations And Rewards.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Concepts/LLM Concepts And Mechanisms.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Concepts/PacMan DQN Project.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Lessons/Agent Learning Limitations.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Lessons/Experiment Next Steps.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Projects/Building Custom LLM With NanoGPT.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Projects/Networking Tracker Database.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Projects/Networking Tracker Features.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Projects/Networking Tracker Request Flow.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Projects/Networking Tracker Testing.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Results/Custom LLM Evidence From Network.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Results/Custom LLM Language Evals.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Results/Initial Expectations.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Results/LLM Results At A Glance.md (no longer in the plan; kept in data/drafts/retired/)
+  retired wiki/Results/Training Results Analysis.md (no longer in the plan; kept in data/drafts/retired/)
+  index.md rebuilt: 22 notes, 3 sources
+
+  created 16 · updated 6 · kept reviewed 0 · already up to date 0
+  notes in vault/wiki: 21 before, 22 after · files outside the plan (duplicates): 0
+  done in 2367.9 s
+  report saved to evidence/ingest/ingest-20260929-102823.json

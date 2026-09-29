@@ -1,0 +1,174 @@
+{
+  "mode": "ask",
+  "question": "What was the mean evaluation score of the Pac-Man agent before and after training?",
+  "uses_chat_history": false,
+  "retrieval": {
+    "method": "BM25 keyword index over vault/raw",
+    "top_k": 4,
+    "query_terms": [
+      "mean",
+      "evalu",
+      "score",
+      "pac",
+      "man",
+      "agent",
+      "train"
+    ],
+    "terms_not_in_index": [],
+    "passages": [
+      {
+        "rank": 1,
+        "id": "S3-P001",
+        "path": "vault/raw/Pac-Man DQN README.md",
+        "section": "Ms. Pac-Man DQN — Class 3 assignment",
+        "lines": [
+          3,
+          17
+        ],
+        "score": 21.27,
+        "matched_terms": [
+          "mean",
+          "evalu",
+          "score",
+          "pac",
+          "man",
+          "agent",
+          "train"
+        ],
+        "text": "**Brian Arevalo Ramos · MBA 290T Fundamentals of Agentic AI · Class 3 / Assignment 2**\n\nI trained the course's ready-made Deep Q-Network (DQN) on `ALE/MsPacman-v5` with three choices of my own:\n**exploration 0.10, 500 training games, learning rate 0.0001.** Everything below comes from one executed run of\n[`pacman_dqn.ipynb`](pacman_dqn.ipynb) on my Intel MacBook Pro (CPU). The notebook is saved **with all cell outputs**\nfrom that final run, and the evidence it produced is copied into [`results/`](results/).\n\n[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/BuildingBrian/pacman-dqn/blob/main/pacman_dqn.ipynb)\n\n| | Untrained network | Trained agent |\n|---|---|---|\n| Mean score over the same 5 evaluation games | **492.0** | **608.0** |\n| First 20 s of one evaluation game (4× speed) | ![Untrained gameplay](results/demos/episode_0000.gif) | ![Best trained gameplay](results/demos/final_best.gif) |\n\nChange in mean score: **+116.0**. The five individual scores are in the [results table](#the-five-before-and-after-scores)."
+      },
+      {
+        "rank": 2,
+        "id": "S3-P012",
+        "path": "vault/raw/Pac-Man DQN README.md",
+        "section": "4. What actually happened > The five before-and-after scores",
+        "lines": [
+          125,
+          138
+        ],
+        "score": 13.11,
+        "matched_terms": [
+          "mean",
+          "evalu",
+          "score",
+          "agent",
+          "train"
+        ],
+        "text": "Same five seeds (101, 202, 303, 404, 505), same 5 % evaluation exploration, same 3,000-decision cap, before and\nafter training. The baseline is the **untrained network**, not a random-action agent.\n\n| Game | Seed | Untrained score | Trained score | Change |\n|---|---|---|---|---|\n| 1 | 101 | 350 | 530 | +180 |\n| 2 | 202 | 500 | 520 | +20 |\n| 3 | 303 | 320 | 680 | +360 |\n| 4 | 404 | 800 | 640 | -160 |\n| 5 | 505 | 490 | 670 | +180 |\n| **Mean** | | **492.0** | **608.0** | **+116.0** |\n\nFull evaluation record with game lengths: [`comparison.json`](results/comparison.json) ·\n[`baseline.json`](results/baseline.json). No game hit the 3,000-decision time limit before or after training; every game ended at game over."
+      },
+      {
+        "rank": 3,
+        "id": "S3-P009",
+        "path": "vault/raw/Pac-Man DQN README.md",
+        "section": "3. What I expected before training",
+        "lines": [
+          87,
+          98
+        ],
+        "score": 12.71,
+        "matched_terms": [
+          "mean",
+          "pac",
+          "man",
+          "agent",
+          "train"
+        ],
+        "text": "- **Untrained baseline around 300–800 points per game** (the setup check's untrained network averaged 492). A random\n  network still eats pellets because Ms. Pac-Man keeps moving in whatever direction the joystick last said, so \"doing\n  nothing useful\" is worth a few hundred points before the ghosts arrive. - **Modest, noisy improvement, not mastery.** I expected the trained mean to land somewhere around 600–900: the agent\n  should learn that continuing along an unfinished pellet row pays, and that some moves near ghosts end the game. I did\n  not expect deliberate ghost avoidance, power-pellet hunting, or clearing a maze, because 500 games is roughly\n  1–2 % of the experience the original DQN paper used, and the replay memory here holds 0.5 % of the paper's. - **A jagged training curve** with a 25-game average that drifts up slowly and can fall back, and **a loss that does not\n  simply go down** (as the network's value estimates grow, the targets move with them)."
+      },
+      {
+        "rank": 4,
+        "id": "S3-P022",
+        "path": "vault/raw/Pac-Man DQN README.md",
+        "section": "6. One limitation I observed",
+        "lines": [
+          222,
+          231
+        ],
+        "score": 10.55,
+        "matched_terms": [
+          "mean",
+          "evalu",
+          "score",
+          "agent",
+          "train"
+        ],
+        "text": "**The agent did not learn to avoid ghosts, and 500 games with a 5,000-decision memory were not enough to expect it to.**\nTrained games were no longer than untrained games (571 vs 589 decisions), the seed-101 checkpoint score swung between\n190 and 1,100 with no trend, and the 25-game average plateaued after roughly game 25. Two design choices in this\nclassroom DQN explain most of that. First, the replay memory holds about eight games, so every update is drawn from the\nagent's most recent behavior and older lessons are overwritten (the original DQN paper kept 1,000,000 transitions).\nSecond, losing a life carries no negative reward, so a death only shows up indirectly as future points that never\narrive, a weak signal when the future is discounted by 0.99 per decision and every reward is clipped to ±1. A smaller\nbut real caveat on the headline number: five evaluation games is a small sample, and one of the five (seed 404) got\n*worse* (800 → 640), so the +116 mean improvement is real for this run but should not be read as a precise measure of\nthe agent's skill."
+      }
+    ]
+  },
+  "status": "answered",
+  "reason": null,
+  "raw_model_reply": "[1] The mean score over the same 5 evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1].\n[2] The mean score for the untrained network was 492.0, and the mean score for the trained agent was 608.0 [2].",
+  "answer": "[1] The mean score over the same 5 evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1].\n[2] The mean score for the untrained network was 492.0, and the mean score for the trained agent was 608.0 [2].",
+  "citation_check": {
+    "cited": [
+      1,
+      2
+    ],
+    "valid_citations": [
+      1,
+      2
+    ],
+    "invalid_citations": [],
+    "figures_in_answer": [
+      "492.0",
+      "5",
+      "608.0"
+    ],
+    "figures_not_in_cited_passages": []
+  },
+  "model_stats": {
+    "purpose": "ask",
+    "wall_seconds": 39.96,
+    "load_seconds": 0.33,
+    "prompt_tokens": 1589,
+    "output_tokens": 78,
+    "prompt_tokens_per_s": 46.2,
+    "output_tokens_per_s": 15.2
+  },
+  "recorded_at": "2026-09-29 10:43:51 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "On",
+    "default_route": true,
+    "outside_host_answered": true,
+    "offline": false
+  },
+  "internet_reachable": true,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": 7.68,
+    "in_gpu_gb": 0.0,
+    "processor": "100% CPU"
+  },
+  "test": {
+    "id": "test-1",
+    "kind": "answerable",
+    "design": "Direct question answered by one source.",
+    "question": "What was the mean evaluation score of the Pac-Man agent before and after training?",
+    "expected_source": "vault/raw/Pac-Man DQN README.md",
+    "expected_section": "The five before-and-after scores",
+    "expected_passage_contains": [
+      "492.0",
+      "608.0"
+    ],
+    "expected_answer": "Mean of the five fixed evaluation games: 492.0 untrained, 608.0 trained (+116.0)."
+  },
+  "expected_passage_rank": [
+    1,
+    2
+  ]
+}

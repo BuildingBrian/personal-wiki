@@ -24,7 +24,7 @@ def one_line(text, limit=400):
 
 card = J(E / "model_card.json")
 device, ident, memory = card["device"], card["model"], card["memory"]
-online = load_tests(E)
+online = load_tests(E / "online")
 offline = load_tests(E / "offline")
 run1 = [J(p) for p in sorted((E / "runs" / "run-1-initial").glob("test-*.json"))]
 assess = J(ROOT / "tests" / "assessments.json") if (ROOT / "tests" / "assessments.json").exists() else {}
@@ -79,13 +79,13 @@ read from those files by [`scripts/build_readme.py`](scripts/build_readme.py).
 """)
 if have_offline:
     w("All four questions below were run **with Wi-Fi off**, after restarting the CLI "
-      "([full offline session](evidence/offline/offline-session.txt)).\n")
+      "([full offline session](evidence/offline/session.txt)).\n")
 else:
     w("> **Offline run pending.** The results below are from the local model with the laptop still connected. "
       "The offline demonstration is run with `Run offline demo.command` after turning Wi-Fi off.\n")
 w("| Test | Question | Kind | Result | Expected passage retrieved at rank | Passages cited | Time | Evidence |")
 w("|---|---|---|---|---|---|---|---|")
-where = "evidence/offline" if have_offline else "evidence"
+where = "evidence/offline" if have_offline else "evidence/online"
 for t in best:
     w(test_row(t, where))
 w(f"""
@@ -338,7 +338,7 @@ probe succeeds. And model memory was read before the model had loaded. Details i
 
 ## 9. Mode checks
 """)
-modes = (E / "offline" / "mode-checks") if have_offline and (E / "offline" / "mode-checks").exists() else (E / "mode-checks")
+modes = (E / "offline" / "mode-checks") if have_offline and (E / "offline" / "mode-checks").exists() else (E / "online" / "mode-checks")
 mrel = modes.relative_to(ROOT).as_posix()
 if (modes / "chat-capabilities-and-followup.md").exists():
     text = (modes / "chat-capabilities-and-followup.md").read_text(encoding="utf-8")
@@ -369,7 +369,7 @@ if have_offline:
       f"outside host answered {net['outside_host_answered']}.\n")
     w("| Step | Command | Evidence |")
     w("|---|---|---|")
-    w("| Network state | `networksetup`, `route`, `ping` | [offline-session.txt](evidence/offline/offline-session.txt) |")
+    w("| Network state | `networksetup`, `route`, `ping` | [session.txt](evidence/offline/session.txt) |")
     w("| Help and status | `./wiki help`, `./wiki status` | same file |")
     w("| Ingestion with local Gemma | `./wiki ingest \"vault/raw/Pac-Man DQN README.md\" --force` | same file, and the [offline ingest report](evidence/ingest/) |")
     w("| Search | `./wiki search \"row level security\"` | same file |")

@@ -1,196 +1,42 @@
 {
   "S1": {
-    "planned_by": "model",
+    "planned_by": "model draft, then edited by Brian during review (renamed vague titles, split two broad notes, added Concepts)",
     "planned_at": "2026-09-29",
     "notes": [
-      {
-        "title": "Building Custom LLM With NanoGPT",
-        "folder": "Projects",
-        "units": [
-          1
-        ]
-      },
-      {
-        "title": "LLM Results At A Glance",
-        "folder": "Results",
-        "units": [
-          2
-        ]
-      },
-      {
-        "title": "LLM Concepts And Mechanisms",
-        "folder": "Concepts",
-        "units": [
-          3
-        ]
-      },
-      {
-        "title": "Custom LLM Evidence From Network",
-        "folder": "Results",
-        "units": [
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11
-        ]
-      },
-      {
-        "title": "Custom LLM Language Evals",
-        "folder": "Results",
-        "units": [
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          4
-        ]
-      },
-      {
-        "title": "Custom LLM Chat Interface",
-        "folder": "Projects",
-        "units": [
-          18
-        ]
-      },
-      {
-        "title": "Custom LLM Lessons Learned",
-        "folder": "Lessons",
-        "units": [
-          19,
-          20,
-          21,
-          22
-        ]
-      }
+      {"title": "Custom LLM Project", "folder": "Projects", "units": [1, 4]},
+      {"title": "Custom LLM Training Choices", "folder": "Projects", "units": [3]},
+      {"title": "Custom LLM Chat Interface", "folder": "Projects", "units": [18]},
+      {"title": "Custom LLM Eval Results", "folder": "Results", "units": [2, 13]},
+      {"title": "Custom LLM Training Evidence", "folder": "Results", "units": [5, 8, 9]},
+      {"title": "Tokens And Embeddings", "folder": "Concepts", "units": [7, 10]},
+      {"title": "Sampling Temperature", "folder": "Concepts", "units": [11]},
+      {"title": "Eval Leakage Policy", "folder": "Concepts", "units": [12, 16]},
+      {"title": "Negation Failure", "folder": "Lessons", "units": [15, 20]},
+      {"title": "Custom LLM Lessons Learned", "folder": "Lessons", "units": [19]},
+      {"title": "Next Steps And Hardware", "folder": "Lessons", "units": [22]}
     ]
   },
   "S2": {
-    "planned_by": "model",
+    "planned_by": "model draft, then edited by Brian during review (merged small notes, moved notes out of Projects, added Row Level Security)",
     "planned_at": "2026-09-29",
     "notes": [
-      {
-        "title": "Networking Tracker Overview",
-        "folder": "Projects",
-        "units": [
-          1
-        ]
-      },
-      {
-        "title": "Networking Tracker Features",
-        "folder": "Projects",
-        "units": [
-          2
-        ]
-      },
-      {
-        "title": "Networking Tracker Architecture",
-        "folder": "Projects",
-        "units": [
-          4,
-          3
-        ]
-      },
-      {
-        "title": "Networking Tracker Request Flow",
-        "folder": "Projects",
-        "units": [
-          5
-        ]
-      },
-      {
-        "title": "Networking Tracker Database",
-        "folder": "Projects",
-        "units": [
-          8
-        ]
-      },
-      {
-        "title": "Networking Tracker Testing",
-        "folder": "Projects",
-        "units": [
-          10,
-          11,
-          12
-        ]
-      },
-      {
-        "title": "Networking Tracker Deployment",
-        "folder": "Projects",
-        "units": [
-          13,
-          14
-        ]
-      },
-      {
-        "title": "Networking Tracker Limitations",
-        "folder": "Lessons",
-        "units": [
-          15
-        ]
-      }
+      {"title": "Networking Tracker Overview", "folder": "Projects", "units": [1, 2]},
+      {"title": "Networking Tracker Architecture", "folder": "Projects", "units": [3, 4, 5]},
+      {"title": "Networking Tracker Deployment", "folder": "Projects", "units": [14, 7]},
+      {"title": "Row Level Security", "folder": "Concepts", "units": [9, 8]},
+      {"title": "Networking Tracker Testing", "folder": "Results", "units": [10, 11, 13]},
+      {"title": "Networking Tracker Limitations", "folder": "Lessons", "units": [15]}
     ]
   },
   "S3": {
-    "planned_by": "model",
+    "planned_by": "model draft, then edited by Brian during review",
     "planned_at": "2026-09-29",
     "notes": [
-      {
-        "title": "PacMan DQN Project",
-        "folder": "Concepts",
-        "units": [
-          3,
-          5,
-          6,
-          7,
-          10,
-          11
-        ]
-      },
-      {
-        "title": "Training Results Analysis",
-        "folder": "Results",
-        "units": [
-          4,
-          5,
-          6,
-          7,
-          8
-        ]
-      },
-      {
-        "title": "Agent Observations And Rewards",
-        "folder": "Concepts",
-        "units": [
-          9
-        ]
-      },
-      {
-        "title": "Experiment Next Steps",
-        "folder": "Lessons",
-        "units": [
-          11
-        ]
-      },
-      {
-        "title": "Initial Expectations",
-        "folder": "Results",
-        "units": [
-          3,
-          4
-        ]
-      },
-      {
-        "title": "Agent Learning Limitations",
-        "folder": "Lessons",
-        "units": [
-          10
-        ]
-      }
+      {"title": "Pac-Man DQN Project", "folder": "Projects", "units": [1, 9]},
+      {"title": "Pac-Man Training Choices", "folder": "Projects", "units": [3, 4]},
+      {"title": "Pac-Man Training Results", "folder": "Results", "units": [5, 6, 7]},
+      {"title": "Pac-Man Gameplay Progress", "folder": "Results", "units": [8]},
+      {"title": "Pac-Man Agent Limitation", "folder": "Lessons", "units": [10, 11]}
     ]
   }
 }

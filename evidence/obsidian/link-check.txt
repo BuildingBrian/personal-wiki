@@ -1,0 +1,13 @@
+CHECK  22 wiki notes · 130 links · 41 source references
+  file names 2 to 6 words, no machine-style names, first heading = file name, every note in the plan,
+  every link resolves to exactly one file, every source reference points to a real heading
+
+  0 problems
+
+Obsidian's own resolver (app.metadataCache.unresolvedLinks), wiki/ and index.md:
+  {}   <- empty means every link resolves
+
+Re-ingesting all three unchanged sources:
+  created 0 · updated 0 · kept reviewed 0 · already up to date 22
+  notes in vault/wiki: 22 before, 22 after · files outside the plan (duplicates): 0
+  done in 0.3 s
