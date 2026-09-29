@@ -24,8 +24,8 @@ I completed the training for 500 requested games. The training resulted in a pos
 - I performed 73,998 learning updates in batches of 32.
 - The elapsed training time, including every-25-game demos, was 1 h 19 min (79 min).
 - I used an Intel Core i7-9750H (6 cores) with 32 GB RAM for the hardware.
-- The untrained mean score was 492.0, and the trained mean score was 608.0, a change of +116.0.
-- The best 25-game average score was 912 at game 328, with single best scores at game 70 (2,640) and game 448 (2,910).
+- The mean score changed from 492.0 to 608.0, a change of +116.0.
+- The best 25-game average score was 912 at game 328.
 
 ## Related notes
 

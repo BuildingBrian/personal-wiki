@@ -1,7 +1,7 @@
 # Evidence card: test-2
 
 - **Mode:** ask (standalone, no chat history) · **Execution:** local
-- **Recorded:** 2026-09-29 10:54:15 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
+- **Recorded:** 2026-09-29 10:44:22 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
 - **Model:** gemma4:e2b · 5.1B · Q4_K_M · digest 7fbdbf8f5e45 · Ollama 0.20.7
 - **Model memory:** 7.68 GB loaded, 100% CPU
 
@@ -80,7 +80,7 @@ score 8.56 · matched: language, model, pick, word
 
 **Status:** answered
 
-Negation transfer failed [3]. The model picked the negated word, such as "tea", instead of the corrected one, or an unrelated color like "green" [3].
+Negation transfer failed [3]. The model chose the negated word, "tea," instead of the corrected one, and in another instance, it chose the color "green" [3].
 
 ## Citation check (done by the harness)
 
@@ -90,7 +90,7 @@ Negation transfer failed [3]. The model picked the negated word, such as "tea", 
 
 ## Timing
 
-34.81 s total · prompt 1556 tokens at 50.6 tokens/s · answer 37 tokens at 10.1 tokens/s
+30.94 s total · prompt 1491 tokens at 53.4 tokens/s · answer 39 tokens at 14.7 tokens/s
 
 ## Automatic checks
 

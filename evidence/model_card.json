@@ -5,17 +5,17 @@
     "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
     "cpu_cores": "6",
     "ram_gb": 32,
-    "available_memory_gb": 11.6,
+    "available_memory_gb": 12.9,
     "gpu": [
       "Intel UHD Graphics 630",
       "1536 MB",
       "AMD Radeon Pro 5300M",
       "4 GB"
     ],
-    "free_disk_gb": 24.0,
+    "free_disk_gb": 23.0,
     "python": "3.14.3"
   },
-  "recorded_at": "2026-09-29 10:39:24 PDT",
+  "recorded_at": "2026-09-29 10:57:56 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",
@@ -46,7 +46,7 @@
   "index": {
     "passages": 121,
     "method": "BM25 (k1=1.5, b=0.75), stdlib only",
-    "built_at": "2026-09-29T10:39:22",
+    "built_at": "2026-09-29T10:50:58",
     "sources": 3,
     "target_passage_words": 130
   }

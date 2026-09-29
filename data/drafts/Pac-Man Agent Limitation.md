@@ -14,17 +14,17 @@ reviewed: false
 
 # Pac-Man Agent Limitation
 
-I observed that the agent did not learn to avoid ghosts, and 500 games with a 5,000-decision memory were insufficient for learning. This limitation stems from design choices in the classroom DQN.
+I observed that the agent did not learn to avoid ghosts, and 500 games with a 5,000-decision memory were insufficient for learning. This limitation is partly explained by two design choices in the classroom DQN.
 
 ## Key details
 
 - The agent did not learn to avoid ghosts.
 - 500 games with a 5,000-decision memory were not enough to expect learning.
-- Trained games were no longer than untrained games (571 vs 589 decisions).
-- The seed-101 checkpoint score swung between 190 and 1,100 with no trend.
-- The 25-game average plateaued after roughly game 25.
 - The replay memory holds about eight games, so every update is drawn from the agent's most recent behavior and older lessons are overwritten.
 - Losing a life carries no negative reward, so a death only shows up indirectly as future points that never arrive.
+- A death signal is weak when the future is discounted by 0.99 per decision and every reward is clipped to ±1.
+- Five evaluation games is a small sample, and one of the five (seed 404) got worse (800 → 640).
+- A ten-times-larger memory (about 1.7 GB of pixels) would let each batch of 32 mix experiences from roughly 80 games instead of 8.
 
 ## Related notes
 

@@ -5,7 +5,6 @@
 cd "$(dirname "$0")/.." || exit 1
 export PYTHONUNBUFFERED=1
 OUT=evidence/offline
-mkdir -p "$OUT"
 
 WIFI=$(networksetup -getairportpower en0 2>/dev/null)
 ROUTE=$(route -n get default 2>&1 | grep -c "gateway:")
@@ -17,7 +16,8 @@ if [[ "$WIFI" == *"On"* || "$ROUTE" != "0" ]] && [[ "$1" != "--rehearsal" ]]; th
   echo "To practise while online:  scripts/offline_demo.sh --rehearsal   (saved separately, never as offline evidence)"
   exit 1
 fi
-[[ "$1" == "--rehearsal" ]] && OUT=evidence/online && mkdir -p "$OUT"
+[[ "$1" == "--rehearsal" ]] && OUT=evidence/online
+mkdir -p "$OUT"
 
 {
   echo "DEMONSTRATION   $(date '+%Y-%m-%d %H:%M:%S %Z')"
@@ -33,7 +33,8 @@ fi
   ./wiki help
   echo
   echo "##### 2. ./wiki status   (model, runtime, device, network)"
-  ./wiki status
+  ./wiki status --save
+  cp evidence/model_card.json "$OUT/model_card.json"
   echo
   echo "##### 3. ./wiki ingest \"vault/raw/Pac-Man DQN README.md\" --force   (local Gemma drafts the notes again)"
   ./wiki ingest "vault/raw/Pac-Man DQN README.md" --force

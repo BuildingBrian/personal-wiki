@@ -27,6 +27,7 @@ device, ident, memory = card["device"], card["model"], card["memory"]
 online = load_tests(E / "online")
 offline = load_tests(E / "offline")
 run1 = [J(p) for p in sorted((E / "runs" / "run-1-initial").glob("test-*.json"))]
+run2 = [J(p) for p in sorted((E / "runs" / "run-2-after-rule-change").glob("test-*.json"))]
 assess = J(ROOT / "tests" / "assessments.json") if (ROOT / "tests" / "assessments.json").exists() else {}
 catalog = J(ROOT / "data" / "catalog.json")["sources"]
 plan = J(ROOT / "data" / "plan.json")
@@ -61,8 +62,8 @@ w(f"""# Ledger — a personal wiki I can talk to, running on my own laptop
 
 Ledger is a command-line assistant that answers from my own project notes using a local open-weight model,
 `{ident['model']}` ({ident.get('parameter_size')} parameters, {ident.get('quantization')}), with no internet connection.
-I wrote the CLI and the harness myself in plain Python with no third-party packages. It has three modes that behave
-differently on purpose:
+The CLI and the harness are my own project, written in plain Python with no third-party packages and built with an AI
+coding assistant (see the note at the end). It has three modes that behave differently on purpose:
 
 | Mode | What it does | Uses the model | Uses my notes | Uses the conversation |
 |---|---|---|---|---|
@@ -112,8 +113,8 @@ w(f"""
 **How an original becomes a wiki page.** `ingest` gives each source a stable id, cuts it into sections, and asks
 local Gemma to draft one note per subject from the section text. The harness, not the model, chooses the file name,
 the folder, the properties and the source references, so every note in [`vault/wiki/`](vault/wiki/) carries links
-back to the exact section of the original it came from. I then read each draft against its source and mark it
-`reviewed: true`. The map from source sections to notes is [`data/plan.json`](data/plan.json); the source catalog is
+back to the exact section of the original it came from. Each draft is then read against its source, corrected where
+needed, and marked `reviewed: true`. The map from source sections to notes is [`data/plan.json`](data/plan.json); the source catalog is
 [`data/catalog.json`](data/catalog.json) and is also printed at the bottom of [`vault/index.md`](vault/index.md).
 
 ## 2. Setup and exact commands
@@ -173,6 +174,7 @@ effort on keeping prompts short.
 """)
 ask_times = [t["model_stats"]["wall_seconds"] for t in best if t.get("model_stats")]
 ask_prompt = [t["model_stats"]["prompt_tokens"] for t in best if t.get("model_stats")]
+SLEEP_NOTE = ""
 w("**Measured on this laptop.**\n")
 w("| Measurement | Value | Source |")
 w("|---|---|---|")
@@ -181,18 +183,26 @@ if ask_times:
     w(f"| One `ask` answer | {min(ask_times)} to {max(ask_times)} s (prompt {min(ask_prompt)} to {max(ask_prompt)} tokens) | [{where}/ask/]({where}/ask/) |")
 if full:
     d = full["drafts"]
-    w(f"| Full ingestion, {len(d)} notes drafted and linked | {round(full['seconds'] / 60, 1)} min in total; "
-      f"{round(sum(x['wall_seconds'] for x in d) / len(d), 1)} s per note on average | "
-      f"[ingest report](evidence/ingest/) |")
+    secs = sorted(x["wall_seconds"] for x in d)
+    awake = [x for x in d if x["wall_seconds"] < 300]
+    slept = [x for x in d if x["wall_seconds"] >= 300]
+    w(f"| Drafting the wiki, {len(d)} notes | median {secs[len(secs) // 2]} s per note; "
+      f"{round(sum(x['wall_seconds'] for x in awake) / 60, 1)} min of model time for {len(awake)} notes | "
+      f"[pass 2 log](evidence/ingest/pass-2-curated-plan.log), [report](evidence/ingest/) |")
     w(f"| Text passed to Gemma for one note | {min(x['source_words_passed'] for x in d)} to {max(x['source_words_passed'] for x in d)} words "
       f"({min(x['prompt_tokens'] for x in d)} to {max(x['prompt_tokens'] for x in d)} tokens) | same report |")
-    w(f"| Reading speed / writing speed | {round(sum(x['prompt_tokens_per_s'] for x in d) / len(d), 1)} / "
-      f"{round(sum(x['output_tokens_per_s'] for x in d) / len(d), 1)} tokens per second | same report |")
+    w(f"| Reading speed / writing speed | {round(sum(x['prompt_tokens_per_s'] for x in awake) / len(awake), 1)} / "
+      f"{round(sum(x['output_tokens_per_s'] for x in awake) / len(awake), 1)} tokens per second | same report |")
+    if slept:
+        SLEEP_NOTE = (f"One drafting call is excluded from the timing: it took {round(slept[0]['wall_seconds'])} s because the "
+                      "laptop went to sleep with its lid closed in the middle of it. The note it produced is normal.")
 if off_ingest:
     w(f"| Offline re-ingestion of one source | {round(off_ingest['seconds'] / 60, 1)} min, "
       f"{len(off_ingest['drafts'])} notes drafted, {len(off_ingest['unplanned_files'])} duplicates | "
       f"[offline ingest report](evidence/ingest/) |")
 w(f"| Search index | {len(passages['passages'])} passages from {len(catalog)} sources, rebuilt in under a second | [`data/index/passages.json`](data/index/passages.json) |")
+if SLEEP_NOTE:
+    w("\n" + SLEEP_NOTE)
 w("""
 ## 4. Architecture: model, retrieval tool, RAG workflow, CLI, harness
 
@@ -244,7 +254,7 @@ flowchart LR
 | Building prompts | `ask`: research rules + passages. `chat`: persona + history + passages when retrieved, or an explicit note that nothing was looked up. `ingest`: the note title + at most 900 words of source. |
 | Calling Gemma | One function, `model.chat`, local only. |
 | Checking citations | `ask.check_citations`, described above. In chat, a reply that used passages but cites none is flagged as unverified. |
-| Errors | Runtime not running, model not downloaded, index missing, source not found and script file missing each print what is wrong and the command that fixes it. `search` keeps working when the model is unavailable. |
+| Errors | Runtime not running, model not downloaded, index missing, source not found and script file missing each print what is wrong and the command that fixes it. `search` keeps working when the model is unavailable. Actual messages: [`evidence/error-handling.txt`](evidence/error-handling.txt). |
 | Saved outputs | Evidence cards as JSON and Markdown, chat transcripts, ingestion reports, and every model call in a local log. Drafts saved from chat with `/save` go to `outputs/`, never into the wiki. |
 
 ## 5. Design choices
@@ -277,6 +287,29 @@ for name, caption in (("1-open-note-with-sources.png", "An open note: short file
 w("""The screenshots are Obsidian's own window contents, captured by [`scripts/obsidian_shots.py`](scripts/obsidian_shots.py)
 through the app's developer interface. The graph filter and colors are saved in
 [`vault/.obsidian/graph.json`](vault/.obsidian/graph.json), so opening the vault reproduces the same view.
+""")
+review = (E / "review-log.md").read_text(encoding="utf-8") if (E / "review-log.md").exists() else ""
+counts = dict(re.findall(r"\| (Links proposed by the harness and model|Kept exactly as the model wrote them|Kept, reason rewritten by me|Removed as unrelated or too weak|Added by me) \| (\d+) \|", review))
+fixes = re.search(r"(\d+) corrections in (\d+) of 22 notes", review)
+if fixes and counts:
+    w(f"""**From the model's draft to a reviewed wiki.** Ingestion ran twice, and both passes are kept.
+
+| | Pass 1: Gemma's own plan | Pass 2: after my cleanup |
+|---|---|---|
+| Notes | 21 | {len(notes)} |
+| Titles | Several generic ones: *Initial Expectations*, *Experiment Next Steps*, *Training Results Analysis* | Every title names its subject: *Pac-Man Training Choices*, *Negation Failure*, *Row Level Security* |
+| Folders | 15 of 21 notes in `Projects` | Spread over `Projects`, `Results`, `Concepts`, `Lessons` |
+| Evidence | [plan](evidence/ingest/pass-1-model-plan.json) · [log](evidence/ingest/pass-1-model-plan.log) | [plan](data/plan.json) · [log](evidence/ingest/pass-2-curated-plan.log) |
+
+I edited the plan, not the files: I renamed vague titles, split two notes that covered seven sections each, and added
+the `Concepts` notes. Re-ingesting then rewrote the notes under their new names and moved the 15 notes that were no
+longer in the plan out of the vault, so **no duplicate or stale note remained**. Then every draft was read against its
+source, by my AI assistant and me: **{fixes.group(1)} corrections in {fixes.group(2)} of 22 notes**, for example a note that stated my prediction as if it
+were the result, and one that said all five Pac-Man games improved when one got worse. Of the
+{counts['Links proposed by the harness and model']} links the harness and model proposed, I kept
+{counts['Kept exactly as the model wrote them']} as written, reworded {counts['Kept, reason rewritten by me']}, removed
+{counts['Removed as unrelated or too weak']} and added {counts['Added by me']}. Every change is listed in the
+[review log](evidence/review-log.md). The originals in `raw/` were never edited.
 """)
 if (E / "obsidian" / "link-check.txt").exists():
     w("**Links and names, checked two ways.** `./wiki check` verifies every file name, heading, link and source "
@@ -311,16 +344,18 @@ w("""## 8. What failed first, and what I changed
 """)
 if run1:
     w("The first run is kept untouched in [`evidence/runs/run-1-initial/`](evidence/runs/run-1-initial/).\n")
-    w("| Test | Run 1 | Final run | Expected passage rank, run 1 |")
-    w("|---|---|---|---|")
+    w("Run 2 is kept in [`evidence/runs/run-2-after-rule-change/`](evidence/runs/run-2-after-rule-change/).\n")
+    w("| Test | Run 1 | Run 2 | Final run | Expected passage rank |")
+    w("|---|---|---|---|---|")
     for a in run1:
         b = next((t for t in best if t["test"]["id"] == a["test"]["id"]), None)
-        w(f"| {a['test']['id']} | {status_word(a)} | {status_word(b) if b else '—'} | {a.get('expected_passage_rank') or '—'} |")
+        c = next((t for t in run2 if t["test"]["id"] == a["test"]["id"]), None)
+        w(f"| {a['test']['id']} | {status_word(a)} | {status_word(c) if c else '—'} | {status_word(b) if b else '—'} | {a.get('expected_passage_rank') or '—'} |")
 w("""
 **The failure: test 2.** The right passage was retrieved at rank 3 ("Negation transfer failed … it picked the negated
 word (`tea`)"), and a second supporting passage at rank 2, but the model replied INSUFFICIENT EVIDENCE. My
 prediction was half right: I expected this test to fail because keyword search cannot match "skill it failed to pick
-up" to "negation". Retrieval did rank the passage lower than three others for that reason, but it was still in the
+up" to "negation". Retrieval did rank the passage lower than two others for that reason, but it was still in the
 top 4. The refusal was the model's. My first rules told it that related information is not an answer, and with a
 question worded differently from the passage it took that literally.
 
@@ -330,7 +365,13 @@ may use different words than the question, and the question is stated before the
 the affected tests. Test 2 is now answered with the correct citation, and both refusals (test 4 and the separation
 check) still refuse, which was the risk of loosening the rule. The rules as used in run 1 are saved next to that run.
 
-**Two bugs in my own harness, found by the same run.** The network flag said "offline" while the laptop was online,
+**A second, smaller change after run 2.** Test 1 was correct but read "[1] … [1]. [2] … [2].": the model began each
+sentence with a passage number and stated the fact twice. I tightened rule 7, and the model then answered in clean
+prose but copied the score table out of the passage, even when told not to. The harness now removes table lines from
+the answer it displays and keeps the untouched reply in the evidence card as `raw_model_reply`
+([run 2 notes](evidence/runs/run-2-after-rule-change/README.md)).
+
+**Two bugs in my own harness, found by run 1.** The network flag said "offline" while the laptop was online,
 because it relied on one outside connection and this Mac's per-app firewall blocks some of those. The harness now reads
 the operating system (Wi-Fi power and default route) as well, and reports offline only when there is no route and no
 probe succeeds. And model memory was read before the model had loaded. Details in the
@@ -398,10 +439,11 @@ w("""## 12. Repository map
 | [`scripts/`](scripts/) | Offline demonstration, Obsidian screenshots, this README's generator. |
 | [`Run offline demo.command`](<Run offline demo.command>) | Double-click launcher for the offline demonstration. |
 
-**AI assistance.** I used Claude (Anthropic) as my AI assistant, as the assignment's starter prompt describes: to write
-the harness code with me, run the tests and assemble this README from the saved outputs. The design choices, sources
-and questions are mine, every result is an actual output of local Gemma on my laptop, and nothing was sent to a hosted
-model at question time.
+**AI assistance.** This project was built with heavy use of Claude (Anthropic) as an AI coding assistant, in the way the
+assignment's starter prompt describes. Claude wrote the harness code, ran the tests, did the first review of the
+generated notes against their sources and assembled this README from the saved outputs. It also proposed the sources,
+the test questions and the note plan, which I approved. Every result shown is an actual output of local Gemma on my
+own laptop, failures included, and nothing was sent to a hosted model at question time.
 """)
 (ROOT / "README.md").write_text("\n".join(L), encoding="utf-8")
 print("README.md written:", len("\n".join(L)), "chars;", "offline evidence:", have_offline)

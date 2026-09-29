@@ -14,18 +14,18 @@ reviewed: false
 
 # Pac-Man Training Choices
 
-I made three specific choices for my Pac-Man training parameters. I chose an exploration rate of 0.10, 500 episodes, and a learning rate of 0.0001. These choices were based on my assessment of the limited replay memory and the need to ensure the training fit within a deadline.
+I made three specific choices for my Pac-Man training parameters. I chose an exploration rate of 0.10, 500 episodes, and a learning rate of 0.0001. These choices were based on the limited replay memory and the need to ensure the training fit within a deadline.
 
 ## Key details
 
 - For Exploration, I chose a value of 0.10, while the notebook default was 0.20.
-- I set the number of Episodes to 500, compared to the default of 100.
-- I set the Learning rate to 0.0001, which is the reference point for Adam in DQN implementations.
+- I chose 500 Episodes, compared to the notebook default of 100.
+- I chose a Learning rate of 0.0001, which was the same as the notebook default.
 - I wanted most of the replay memory to be the agent's own policy rather than coin flips due to the limited memory.
-- I expected the trained mean to land somewhere around 600–900 points per game.
-- I did not expect deliberate ghost avoidance, power-pellet hunting, or clearing a maze.
+- I expected the untrained baseline to be around 300–800 points per game.
+- I expected the trained mean to land somewhere around 600–900.
 - I expected a jagged training curve with a 25-game average that drifts up slowly and can fall back.
-- I expected a loss that does not simply go down because the targets move with the growing value estimates.
+- I expected a loss that does not simply go down.
 
 ## Related notes
 

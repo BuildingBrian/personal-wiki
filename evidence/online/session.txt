@@ -1,10 +1,10 @@
-DEMONSTRATION   2026-09-29 10:39:44 PDT
+DEMONSTRATION   2026-09-29 10:49:24 PDT
 *** RUN WHILE ONLINE (rehearsal of the same script): this is NOT offline evidence ***
 
 ##### 0. Network state, from the operating system
 Wi-Fi Power (en0): On
 default route:     gateway: 10.59.92.1
-ping 1.1.1.1:  round-trip min/avg/max/stddev = 13.500/13.500/13.500/0.000 ms
+ping 1.1.1.1:  round-trip min/avg/max/stddev = 14.891/14.891/14.891/0.000 ms
 github.com:    Connection to github.com port 443 [tcp/https] succeeded!
 reachable
 
@@ -41,17 +41,17 @@ Execution
     "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
     "cpu_cores": "6",
     "ram_gb": 32,
-    "available_memory_gb": 11.6,
+    "available_memory_gb": 13.2,
     "gpu": [
       "Intel UHD Graphics 630",
       "1536 MB",
       "AMD Radeon Pro 5300M",
       "4 GB"
     ],
-    "free_disk_gb": 24.0,
+    "free_disk_gb": 22.0,
     "python": "3.14.3"
   },
-  "recorded_at": "2026-09-29 10:39:46 PDT",
+  "recorded_at": "2026-09-29 10:49:26 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",
@@ -82,7 +82,7 @@ Execution
   "index": {
     "passages": 121,
     "method": "BM25 (k1=1.5, b=0.75), stdlib only",
-    "built_at": "2026-09-29T10:39:22",
+    "built_at": "2026-09-29T10:39:46",
     "sources": 3,
     "target_passage_words": 130
   }
@@ -96,22 +96,22 @@ INGEST  3 sources in vault/raw
   S3  raw/Pac-Man DQN README.md  (3186 words)  unchanged
   search index rebuilt: 121 passages (no model needed for this step)
   S3 Pac-Man DQN README: 5 notes planned
-    drafted "Pac-Man DQN Project" in 35.97 s (read 935 tokens, passed 440 words of source)
+    drafted "Pac-Man DQN Project" in 34.86 s (read 935 tokens, passed 440 words of source)
     kept the reviewed note; the fresh draft is in data/drafts/ for comparison
-    drafted "Pac-Man Training Choices" in 39.04 s (read 1127 tokens, passed 633 words of source)
+    drafted "Pac-Man Training Choices" in 44.4 s (read 1127 tokens, passed 633 words of source)
     kept the reviewed note; the fresh draft is in data/drafts/ for comparison
-    drafted "Pac-Man Training Results" in 38.37 s (read 1093 tokens, passed 508 words of source)
+    drafted "Pac-Man Training Results" in 40.81 s (read 1093 tokens, passed 508 words of source)
     kept the reviewed note; the fresh draft is in data/drafts/ for comparison
-    drafted "Pac-Man Gameplay Progress" in 57.81 s (read 1503 tokens, passed 548 words of source)
+    drafted "Pac-Man Gameplay Progress" in 57.3 s (read 1503 tokens, passed 548 words of source)
     kept the reviewed note; the fresh draft is in data/drafts/ for comparison
-    drafted "Pac-Man Agent Limitation" in 31.73 s (read 745 tokens, passed 389 words of source)
+    drafted "Pac-Man Agent Limitation" in 33.03 s (read 745 tokens, passed 389 words of source)
     kept the reviewed note; the fresh draft is in data/drafts/ for comparison
   index.md rebuilt: 22 notes, 3 sources
 
   created 0 · updated 0 · kept reviewed 5 · already up to date 0
   notes in vault/wiki: 22 before, 22 after · files outside the plan (duplicates): 0
-  done in 203.3 s
-  report saved to evidence/ingest/ingest-20260929-104310.json
+  done in 210.8 s
+  report saved to evidence/ingest/ingest-20260929-105258.json
 
 ##### 4. ./wiki search "row level security"   (no model)
 SEARCH  "row level security"   (keyword index over original sources; no model call, no generated answer)
@@ -185,24 +185,224 @@ query terms: row, level, security
 ASK  "What was the mean evaluation score of the Pac-Man agent before and after training?"   (standalone: no chat history, no persona)
 model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
 
-[1] The mean score over the same 5 evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1].
-[2] The mean score for the untrained network was 492.0, and the mean score for the trained agent was 608.0 [2].
+The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].
 
 Citations:
   [1] vault/raw/Pac-Man DQN README.md  ›  Ms. Pac-Man DQN — Class 3 assignment  (lines 3–17)
   [2] vault/raw/Pac-Man DQN README.md  ›  4. What actually happened > The five before-and-after scores  (lines 125–138)
 
-(39.96 s · read 1589 tokens at 46.2/s · wrote 78 at 15.2/s · model memory 7.68 GB)
+(41.49 s · read 1654 tokens at 44.9/s · wrote 60 at 14.0/s · model memory 7.68 GB)
 
 ====================================================================================================
 ASK  "Which skill did my tiny language model fail to pick up, and what wrong word did it choose?"   (standalone: no chat history, no persona)
 model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
 
-Negation transfer failed [3]. The model chose the negated word, "tea," instead of the corrected one, and in another instance, it chose the color "green" [3].
+Negation transfer failed [3]. The model picked the negated word, such as "tea", instead of the corrected one, or an unrelated color like "green" [3].
 
 Citations:
   [3] vault/raw/Custom LLM README.md  ›  7. One limitation and my next experiment  (lines 519–528)
 
-(30.94 s · read 1491 tokens at 53.4/s · wrote 39 at 14.7/s · model memory 7.68 GB)
+(34.81 s · read 1556 tokens at 50.6/s · wrote 37 at 10.1/s · model memory 7.68 GB)
 
 ====================================================================================================
+ASK  "How does the networking tracker stop one user from reading another user's contacts?"   (standalone: no chat history, no persona)
+model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
+
+Row Level Security inside Postgres enforces that every contact belongs to exactly one account, which keeps the data private even when a request is made directly to the public Data API with a valid login [3]. This mechanism prevents one user from reading another user's contacts [1, 2].
+
+Citations:
+  [1] vault/raw/Networking Tracker README.md  ›  Production verification  (lines 376–388)
+  [2] vault/raw/Networking Tracker README.md  ›  Tests > Test output  (lines 297–326)
+  [3] vault/raw/Networking Tracker README.md  ›  Networking Tracker  (lines 3–7)
+
+(39.75 s · read 1698 tokens at 48.1/s · wrote 58 at 14.3/s · model memory 7.68 GB)
+
+====================================================================================================
+ASK  "Which GPU did I buy to train models at home?"   (standalone: no chat history, no persona)
+model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
+
+Insufficient evidence: the wiki sources do not contain this information.
+  reason: the model found no answer in the passages
+  closest passages that were searched:
+    [1] vault/raw/Custom LLM README.md  ›  9. Reflection and where I go from here
+    [2] vault/raw/Custom LLM README.md  ›  4. The fixed 48-case language evals > 4.3 Reading the results honestly
+    [3] vault/raw/Custom LLM README.md  ›  4. The fixed 48-case language evals > 4.4 How eval material stayed out of training
+    [4] vault/raw/Pac-Man DQN README.md  ›  1. Open and run the notebook
+
+(31.95 s · read 1552 tokens at 49.7/s · wrote 6 at 14.9/s · model memory 7.68 GB)
+
+====================================================================================================
+  test-1  answerable   status=answered               expected passage at rank [1, 2]
+  test-2  answerable   status=answered               expected passage at rank [3]
+  test-3  answerable   status=answered               expected passage at rank -
+  test-4  unsupported  status=insufficient_evidence  expected passage at rank -
+  evidence cards saved in evidence/online/ask
+====================================================================================================
+MODE CHECK 0: chat's retrieval decision on 17 messages (no model call)
+
+ok  skip   | what can we do?                                                    | skipped: question about the assistant itself
+ok  skip   | what can you help me with?                                         | skipped: question about the assistant itself
+ok  skip   | hello                                                              | skipped: question about the assistant itself
+ok  skip   | thanks, that helps                                                 | skipped: follow-up on the conversation
+ok  skip   | make that shorter                                                  | skipped: follow-up on the conversation
+ok  skip   | For the record, I have decided to name my next project Falcon.     | skipped: weak match with the sources (best score 8.09)
+ok  skip   | help me brainstorm names for a robotics club                       | skipped: weak match with the sources (best score 6.79)
+ok  skip   | how should I structure my week?                                    | skipped: weak match with the sources (best score 6.14)
+ok  skip   | I feel behind on everything today                                  | skipped: weak match with the sources (best score 6.45)
+ok  skip   | give me three ideas for a weekend project                          | skipped: weak match with the sources (best score 5.42)
+ok  skip   | what should I cook tonight?                                        | skipped: no wiki passage shares a word with this message
+ok  LOOKUP | Draft a short plan for my next Pac-Man experiment.                 | looked up 3 passages: the message names a project (pac man)
+ok  LOOKUP | What did the Pac-Man agent score after training?                   | looked up 3 passages: the message names a project (pac man)
+ok  LOOKUP | Why did negation fail in my language model?                        | looked up 3 passages: the message names a project (language model)
+ok  LOOKUP | Write a two-line LinkedIn post about my networking tracker.        | looked up 3 passages: the message names a project (network tracker)
+ok  LOOKUP | what is row level security and how did I use it?                   | looked up 3 passages: the message asks about my records
+ok  LOOKUP | Can you remind me what hardware I was considering?                 | looked up 3 passages: the message asks about my records
+
+misjudged: 0 of 17
+====================================================================================================
+MODE CHECK 1: chat capabilities and follow-up
+
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+Ledger: your project assistant. I run on this laptop only. Type /help for commands, /quit to leave.
+
+You: what can we do?
+  [harness] wiki lookup skipped: question about the assistant itself
+Ledger: We can look at the projects. We have the nanoGPT language model, the Ms. Pac-Man agent, and the networking tracker app.
+
+What are you thinking about working on next? We could brainstorm an idea, plan the next experiment for one of them, or look at something new.
+  (16.28 s)
+
+You: what can you help me with?
+  [harness] wiki lookup skipped: question about the assistant itself
+Ledger: I can help you with your projects. I can brainstorm ideas, plan experiments, draft text, or look up information from the project wiki.
+
+What's on your mind right now?
+  (6.09 s)
+
+You: Draft a short plan for my next Pac-Man experiment.
+  [harness] wiki lookup looked up 3 passages: the message names a project (pac man)
+Ledger: Suggestion: We could try to focus on refining the agent's behavior based on the training results.
+
+Here is a draft plan for the next Pac-Man experiment.
+
+1.  **Analyze Results:** Look closely at the results in `results/` to see the difference between the untrained and trained agent performance [1].
+2.  **Adjust Hyperparameters:** Since the training curve was jagged [3], we could experiment with the exploration rate (currently 0.10) or the number of training games (currently 500) to see if a different schedule yields a smoother learning process.
+3.  **Test New Scenarios:** Run a new training session with slightly different initial settings to see if we can push the mean score closer to the expected range of 600–900 [3].
+  [1] vault/raw/Pac-Man DQN README.md  ›  Ms. Pac-Man DQN — Class 3 assignment  (lines 3–17)
+  [3] vault/raw/Pac-Man DQN README.md  ›  3. What I expected before training  (lines 87–98)
+  (42.07 s)
+
+You: make that shorter
+  [harness] wiki lookup skipped: follow-up on the conversation
+Ledger: Here is a shorter plan for the next Pac-Man experiment.
+
+1.  **Analyze Results:** Check `results/` to see performance differences [1].
+2.  **Adjust Hyperparameters:** Experiment with the exploration rate (0.10) or the number of training games (500) to smooth the learning curve [3].
+3.  **Test Scenarios:** Run new sessions with different initial settings to aim for a higher score (600–900) [3].
+  [1] vault/raw/Pac-Man DQN README.md  ›  Ms. Pac-Man DQN — Class 3 assignment  (lines 3–17)  (from the earlier lookup)
+  [3] vault/raw/Pac-Man DQN README.md  ›  3. What I expected before training  (lines 87–98)  (from the earlier lookup)
+  (21.79 s)
+
+transcript saved to evidence/online/mode-checks/chat-capabilities-and-followup.md
+====================================================================================================
+MODE CHECK 2: search returns passages and no generated answer
+
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+
+SEARCH  "row level security"   (keyword index over original sources; no model call, no generated answer)
+query terms: row, level, security
+
+[1] vault/raw/Networking Tracker README.md  ›  Technology stack and why  (lines 68–77)
+    passage S2-P005 · score 10.02 · matched: row, level, security
+    | | Layer | Choice | Why |
+    | | --- | --- | --- |
+    | | Framework | **Next.js 16 (App Router) + TypeScript** | Keeps the frontend and backend in one repo while staying genuinely separate — React client components in the browser, Route Handlers on the server. Also the deployment target Vercel is built around. |
+    | | Styling | **Tailwind CSS v4 + shadcn/ui** | shadcn/ui is a real component system (Base UI primitives with consistent design tokens) rather than hand-rolled CSS, so the UI stays accessible and consistent across breakpoints with little custom code. |
+    | | Database | **Neon Postgres** | Serverless Postgres that supports Row Level Security — which is where this app's security actually lives. |
+    | | Auth | **Neon Managed Better Auth** | Issues a JWT whose subject Postgres reads as `auth.user_id()`. That is what makes database-level ownership possible without the app ever passing a user ID around. |
+
+[2] vault/raw/Networking Tracker README.md  ›  Networking Tracker  (lines 3–7)
+    passage S2-P001 · score 8.73 · matched: row, level, security
+    | A private, per-user networking tracker for the people you want to stay connected with at Berkeley. Sign up, add the people you meet — name, company, role, where you met, notes, and a priority — then sort, filter, edit, and delete them. Every contact belongs to exactly one account, and that ownership is enforced by **Row Level Security inside Postgres** rather than by application code, so the data stays private even against a request made directly to the public Data API with a valid login.
+    | 
+    | **Live app:** **https://networking-tracker-gules.vercel.app**
+    | 
+    | **Repository:** https://github.com/BuildingBrian/networking-tracker
+
+[3] vault/raw/Networking Tracker README.md  ›  Architecture  (lines 83–102)
+    passage S2-P007 · score 7.23 · matched: row, level, security
+    | ```
+    | Browser (React client components — src/components/*)
+    |   │
+    |   │  fetch('/api/contacts')              never talks to Postgres or the Data API
+    |   ▼
+    | Next.js Route Handlers (src/app/api/contacts/…)          ← the backend
+    |   │  1. getSessionUser()   → 401 if not signed in
+    |   │  2. Zod validation     → 400 with per-field messages
+    |   │  3. exchange the session cookie for the user's JWT
+    |   │  4. Data API call carrying THAT JWT
+    |   ▼
+    | Neon Data API (PostgREST)
+    |   │
+    |   ▼
+    | Neon Postgres — Row Level Security decides which rows the query may touch
+    | ```
+    | 
+    | **Frontend** — `src/components/*` are client components. They hold UI state (filters, sort, dialogs) and talk only to this app's own `/api` routes. They never see a database credential.
+    | 
+    | **Backend** — `src/app/api/contacts/route.ts` (list, create) and `src/app/api/contacts/[id]/route.ts` (update, delete) are the server. Each handler authenticates the session, validates the body against a Zod schema, and only then issues a Data API query. `src/app/api/auth/[...path]/route.ts` proxies Neon Auth so the session lands in an **httpOnly, signed cookie** rather than browser-readable storage. `src/middleware.ts` redirects unauthenticated visits to `/contacts` to the sign-in page.
+
+[4] vault/raw/Custom LLM README.md  ›  4. The fixed 48-case language evals > 4.2 All 48 cases  (lines 348–395)
+    passage S1-P032 · score 5.04 · matched: security
+    | | lang_01 | domain_context | the report about the customer explains the | service | ❌ juice | ✅ service | ❌ code | ✅ service | support in detail . |
+    | | lang_02 | domain_context | the report about the merchandise explains the | quality | ❌ lesson | ✅ quality | ✅ quality | ✅ quality | return in detail . |
+    | | lang_03 | domain_context | the report about the mortgage explains the | payment | ❌ harvest | ✅ payment | ✅ payment | ✅ payment | return in detail . |
+    | | lang_04 | domain_context | the report about the mango explains the | juice | ✅ juice | ✅ juice | ❌ code | ✅ juice | taste in detail . |
+    | | lang_05 | domain_context | the report about the bicycle explains the | journey | ✅ journey | ✅ journey | ❌ price | ✅ journey | traffic in detail . |
+    | | lang_06 | domain_context | the report about the application explains the | security | ❌ student | ✅ security | ❌ payment | ✅ security | security in detail . |
+
+[5] vault/raw/Custom LLM README.md  ›  3. Evidence from inside the network > 3.6 Attention rows  (lines 265–274)
+    passage S1-P024 · score 3.66 · matched: row
+    | For the three-token prefix `<BOS> the customer`, the notebook saves one head's attention weights
+    | ([inspection.json → attention_rows](evidence/starter/inspection.json)): each row is a position, each column an earlier position.
+    | 
+    | ```
+    | Experiment 1: [[1.0, 0.0, 0.0], [0.606, 0.394, 0.0], [0.485, 0.423, 0.092]]
+    | Experiment 2: [[1.0, 0.0, 0.0], [0.154, 0.846, 0.0], [0.449, 0.28, 0.271]]
+    | ```
+    | 
+    | Row 1 can only look at itself (1.0); row 2 splits its attention between `<BOS>` and `the`; row 3 (`customer`) spreads
+    | over all three. The zeros above the diagonal are the causal mask: a position never sees tokens after it, which is what lets
+    | the model generate left to right.
+
+====================================================================================================
+MODE CHECK 3: a claim made only in chat is not evidence for ask
+
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: connected (Wi-Fi On)
+Ledger: your project assistant. I run on this laptop only. Type /help for commands, /quit to leave.
+
+You: For the record, I have decided to name my next project Falcon.
+  [harness] wiki lookup skipped: weak match with the sources (best score 8.09)
+Ledger: Got it. Falcon it is.
+
+What's the first thing we need to nail down for Falcon? Brainstorming, architecture, or just setting up a plan?
+  (4.54 s)
+
+transcript saved to evidence/online/mode-checks/separation-chat-side.md
+ASK  "What name did I decide on for my next project?"   (standalone: no chat history, no persona)
+model: gemma4:e2b (Q4_K_M) · execution: local · network: connected
+
+Insufficient evidence: the wiki sources do not contain this information.
+  reason: the model found no answer in the passages
+  closest passages that were searched:
+    [1] vault/raw/Networking Tracker README.md  ›  Local setup
+    [2] vault/raw/Networking Tracker README.md  ›  Tests > Test output
+    [3] vault/raw/Networking Tracker README.md  ›  Deployment
+    [4] vault/raw/Networking Tracker README.md  ›  Tests > Test output
+
+(40.06 s · read 1223 tokens at 31.2/s · wrote 6 at 15.1/s · model memory 7.68 GB)
+
+  mode check evidence saved in evidence/online/mode-checks
+
+FINISHED   2026-09-29 10:57:42 PDT
+network at the end: Wi-Fi Power (en0): On

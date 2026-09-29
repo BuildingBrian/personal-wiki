@@ -98,8 +98,8 @@
   },
   "status": "answered",
   "reason": null,
-  "raw_model_reply": "The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].",
-  "answer": "The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].",
+  "raw_model_reply": "[1] The mean score over the same 5 evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1].\n[2] The mean score for the untrained network was 492.0, and the mean score for the trained agent was 608.0 [2].",
+  "answer": "[1] The mean score over the same 5 evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1].\n[2] The mean score for the untrained network was 492.0, and the mean score for the trained agent was 608.0 [2].",
   "citation_check": {
     "cited": [
       1,
@@ -111,22 +111,22 @@
     ],
     "invalid_citations": [],
     "figures_in_answer": [
-      "116.0",
       "492.0",
+      "5",
       "608.0"
     ],
     "figures_not_in_cited_passages": []
   },
   "model_stats": {
     "purpose": "ask",
-    "wall_seconds": 41.49,
-    "load_seconds": 0.3,
-    "prompt_tokens": 1654,
-    "output_tokens": 60,
-    "prompt_tokens_per_s": 44.9,
-    "output_tokens_per_s": 14.0
+    "wall_seconds": 39.96,
+    "load_seconds": 0.33,
+    "prompt_tokens": 1589,
+    "output_tokens": 78,
+    "prompt_tokens_per_s": 46.2,
+    "output_tokens_per_s": 15.2
   },
-  "recorded_at": "2026-09-29 10:53:40 PDT",
+  "recorded_at": "2026-09-29 10:43:51 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",

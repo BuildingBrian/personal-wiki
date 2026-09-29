@@ -17,6 +17,13 @@ def build_messages(question, hits):
     return [{"role": "system", "content": rules}, {"role": "user", "content": user}]
 
 
+def tidy(reply):
+    """A small model sometimes copies a table out of a passage before answering. The answer shown is the prose;
+    the untouched reply is kept in the evidence record as raw_model_reply."""
+    lines = [l for l in reply.splitlines() if not l.lstrip().startswith("|")]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
 def check_citations(answer, hits):
     """The harness does not trust the model's citations. It checks that every cited number is a passage that was
     actually retrieved, and that every figure in the answer appears in a cited passage."""
@@ -52,7 +59,7 @@ def run(question, k=config.TOP_K, out=None, quiet=False):
             status, answer = "insufficient_evidence", REFUSAL
             reason = "the model answered without citing any retrieved passage, so the harness withheld the answer"
         else:
-            status, answer, reason = "answered", reply, None
+            status, answer, reason = "answered", tidy(reply), None
         record.update(status=status, reason=reason, raw_model_reply=reply, answer=answer, citation_check=check,
                       model_stats=stats)
     record.update(evidence.stamp())          # taken after the call, so memory describes the loaded model

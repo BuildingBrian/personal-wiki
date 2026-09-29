@@ -94,8 +94,8 @@
   },
   "status": "answered",
   "reason": null,
-  "raw_model_reply": "Negation transfer failed [3]. The model picked the negated word, such as \"tea\", instead of the corrected one, or an unrelated color like \"green\" [3].",
-  "answer": "Negation transfer failed [3]. The model picked the negated word, such as \"tea\", instead of the corrected one, or an unrelated color like \"green\" [3].",
+  "raw_model_reply": "Negation transfer failed [3]. The model chose the negated word, \"tea,\" instead of the corrected one, and in another instance, it chose the color \"green\" [3].",
+  "answer": "Negation transfer failed [3]. The model chose the negated word, \"tea,\" instead of the corrected one, and in another instance, it chose the color \"green\" [3].",
   "citation_check": {
     "cited": [
       3
@@ -109,14 +109,14 @@
   },
   "model_stats": {
     "purpose": "ask",
-    "wall_seconds": 34.81,
-    "load_seconds": 0.34,
-    "prompt_tokens": 1556,
-    "output_tokens": 37,
-    "prompt_tokens_per_s": 50.6,
-    "output_tokens_per_s": 10.1
+    "wall_seconds": 30.94,
+    "load_seconds": 0.29,
+    "prompt_tokens": 1491,
+    "output_tokens": 39,
+    "prompt_tokens_per_s": 53.4,
+    "output_tokens_per_s": 14.7
   },
-  "recorded_at": "2026-09-29 10:54:15 PDT",
+  "recorded_at": "2026-09-29 10:44:22 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",

@@ -1,7 +1,7 @@
 # Evidence card: test-1
 
 - **Mode:** ask (standalone, no chat history) · **Execution:** local
-- **Recorded:** 2026-09-29 10:53:40 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
+- **Recorded:** 2026-09-29 10:43:51 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
 - **Model:** gemma4:e2b · 5.1B · Q4_K_M · digest 7fbdbf8f5e45 · Ollama 0.20.7
 - **Model memory:** 7.68 GB loaded, 100% CPU
 
@@ -85,17 +85,18 @@ score 10.55 · matched: mean, evalu, score, agent, train
 
 **Status:** answered
 
-The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].
+[1] The mean score over the same 5 evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1].
+[2] The mean score for the untrained network was 492.0, and the mean score for the trained agent was 608.0 [2].
 
 ## Citation check (done by the harness)
 
 - Cited passages: [1, 2] · valid: [1, 2] · not retrieved: []
-- Figures in the answer: ['116.0', '492.0', '608.0']
+- Figures in the answer: ['492.0', '5', '608.0']
 - Figures missing from the cited passages: []
 
 ## Timing
 
-41.49 s total · prompt 1654 tokens at 44.9 tokens/s · answer 60 tokens at 14.0 tokens/s
+39.96 s total · prompt 1589 tokens at 46.2 tokens/s · answer 78 tokens at 15.2 tokens/s
 
 ## Automatic checks
 

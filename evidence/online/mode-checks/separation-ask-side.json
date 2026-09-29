@@ -1,0 +1,129 @@
+{
+  "mode": "ask",
+  "question": "What name did I decide on for my next project?",
+  "uses_chat_history": false,
+  "retrieval": {
+    "method": "BM25 keyword index over vault/raw",
+    "top_k": 4,
+    "query_terms": [
+      "name",
+      "decide",
+      "next",
+      "project"
+    ],
+    "terms_not_in_index": [
+      "decide"
+    ],
+    "passages": [
+      {
+        "rank": 1,
+        "id": "S2-P011",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Local setup",
+        "lines": [
+          133,
+          163
+        ],
+        "score": 8.09,
+        "matched_terms": [
+          "name",
+          "project"
+        ],
+        "text": "```bash\ngit clone https://github.com/BuildingBrian/networking-tracker.git\ncd networking-tracker\nnpm install\n```\n\n**1. Create the Neon project** — either in the [Neon Console](https://console.neon.tech) (create a project → enable **Auth** → enable **Data API**) or with the CLI:\n\n```bash\nnpm i -g neon@latest && neon login\nneon neon-auth enable --project-id <id> --branch production\nneon data-api  create --project-id <id> --branch production --database neondb\nneon neon-auth domain allow-localhost enable --project-id <id> --branch production   # lets localhost sign in\n```\n\n**2. Configure the environment**\n\n```bash\ncp .env.example .env.local\nopenssl rand -base64 32        # → NEON_AUTH_COOKIE_SECRET\n```\n\nFill in `.env.local` with the Auth URL, Data API URL, and pooled connection string from Neon (`neon connection-string production --project-id <id> --database-name neondb --role-name neondb_owner --pooled`).\n\n**3. Apply the schema and RLS policies**\n\n```bash\nnpm run db:push\n```\n\nThis runs `db/schema.sql` over Neon's HTTP driver and then prints the RLS flags, every policy with its `USING` / `WITH CHECK` expression, and every column — so the security requirements are verifiable from the terminal."
+      },
+      {
+        "rank": 2,
+        "id": "S2-P021",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Tests > Test output",
+        "lines": [
+          297,
+          326
+        ],
+        "score": 4.73,
+        "matched_terms": [
+          "name"
+        ],
+        "text": "```\n ✓ tests/validation.test.ts > contact validation — name > rejects an empty name with a clear message\n ✓ tests/validation.test.ts > contact validation — name > rejects a name that is only whitespace\n ✓ tests/validation.test.ts > contact validation — name > rejects a missing name\n ✓ tests/validation.test.ts > contact validation — name > rejects a name longer than 200 characters\n ✓ tests/validation.test.ts > contact validation — name > trims surrounding whitespace from an otherwise valid name\n ✓ tests/validation.test.ts > contact validation — priority > accepts the valid priority \"high\"\n ✓ tests/validation.test.ts > contact validation — priority > accepts the valid priority \"medium\"\n ✓ tests/validation.test.ts > contact validation — priority > accepts the valid priority \"low\"\n ✓ tests/validation.test.ts > contact validation — priority > rejects a priority outside high / medium / low\n```"
+      },
+      {
+        "rank": 3,
+        "id": "S2-P031",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Deployment",
+        "lines": [
+          413,
+          420
+        ],
+        "score": 4.38,
+        "matched_terms": [
+          "project"
+        ],
+        "text": "   `DATABASE_URL` is deliberately **not** added — the running app never uses it.\n4. `vercel --prod`.\n5. Add the deployed domain to Neon Auth's trusted origins so sign-in works there:\n\n   ```bash\n   neon neon-auth domain add https://<your-app>.vercel.app --project-id <id> --branch production\n   ```\n\n   For this deployment the public production domain `networking-tracker-gules.vercel.app` is registered. Vercel also generates a `<project>-<team>.vercel.app` alias, but Deployment Protection puts a Vercel login in front of it — so that one is deliberately *not* the URL in this README.\n6. Open the public URL in a private window, create two accounts, and confirm neither can see the other's contacts. The same can be automated: `TEST_APP_URL=https://<your-app>.vercel.app npm test`."
+      },
+      {
+        "rank": 4,
+        "id": "S2-P020",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Tests > Test output",
+        "lines": [
+          295,
+          295
+        ],
+        "score": 4.26,
+        "matched_terms": [
+          "project"
+        ],
+        "text": "`npm test` on 2026-09-08 against the live Neon project (`FORCE_COLOR=0 npx vitest run --reporter=verbose`, saved as [`docs/test-output.txt`](docs/test-output.txt)):"
+      }
+    ]
+  },
+  "status": "insufficient_evidence",
+  "reason": "the model found no answer in the passages",
+  "raw_model_reply": "INSUFFICIENT EVIDENCE",
+  "answer": "Insufficient evidence: the wiki sources do not contain this information.",
+  "citation_check": {
+    "cited": [],
+    "valid_citations": [],
+    "invalid_citations": [],
+    "figures_in_answer": [],
+    "figures_not_in_cited_passages": []
+  },
+  "model_stats": {
+    "purpose": "ask",
+    "wall_seconds": 40.06,
+    "load_seconds": 0.4,
+    "prompt_tokens": 1223,
+    "output_tokens": 6,
+    "prompt_tokens_per_s": 31.2,
+    "output_tokens_per_s": 15.1
+  },
+  "recorded_at": "2026-09-29 10:57:42 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "On",
+    "default_route": true,
+    "outside_host_answered": true,
+    "offline": false
+  },
+  "internet_reachable": true,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": 7.68,
+    "in_gpu_gb": 0.0,
+    "processor": "100% CPU"
+  }
+}

@@ -20,11 +20,11 @@ I trained a Deep Q-Network (DQN) on `ALE/MsPacman-v5` for a class assignment. I 
 
 - I trained the DQN on `ALE/MsPacman-v5` with exploration set to 0.10, 500 training games, and a learning rate of 0.0001.
 - The results from one executed run of `pacman_dqn.ipynb` on my Intel MacBook Pro (CPU) are copied into `results/`.
-- The mean score over the same 5 evaluation games was 492.0 for the untrained network and 608.0 for the trained agent.
-- The change in mean score was +116.0.
+- The mean score for the trained agent was 608.0, compared to 492.0 for the untrained network.
+- The change in mean score was +116.0 across the five individual scores.
 - The agent observes four game screens shrunk to 84 × 84 grayscale pixels and stacked together.
-- The agent's actions are nine numbers corresponding to joystick moves: no-op, up, right, left, down, and the four diagonals.
-- Rewards are game points, where rewards are clipped to between -1 and +1 for learning purposes.
+- The agent's actions are joystick moves, with the network outputting nine numbers for the nine joystick positions.
+- Rewards are game points, where rewards are clipped to between -1 and +1 for learning.
 - The agent learns by storing its last 5,000 decisions and replaying 32 random ones every four decisions.
 
 ## Related notes

@@ -1,0 +1,27 @@
+$ ./wiki ask "anything" --mode online
+Online mode is an optional extension and is not implemented. This project is local only: leave out --mode or use --mode local.
+
+$ WIKI_OLLAMA_URL=http://127.0.0.1:9 ./wiki ask "What did the Pac-Man agent score?"     # runtime not running
+Local model unavailable.
+  Cannot reach the local model runtime at http://127.0.0.1:9.
+  Start it with:  ollama serve   (or open the Ollama app)
+  search still works without the model.
+
+$ WIKI_OLLAMA_URL=http://127.0.0.1:9 ./wiki search "pac-man mean score" -k 1     # search still works without the model
+SEARCH  "pac-man mean score"   (keyword index over original sources; no model call, no generated answer)
+query terms: pac, man, mean, score
+
+[1] vault/raw/Pac-Man DQN README.md  ›  Ms. Pac-Man DQN — Class 3 assignment  (lines 3–17)
+    passage S3-P001 · score 15.13 · matched: pac, man, mean, score
+
+$ WIKI_MODEL=gemma4:e4b ./wiki ask "What did the Pac-Man agent score?"     # model not downloaded
+Local model unavailable.
+  The local runtime is running but model 'gemma4:e4b' is not downloaded.
+  While online, run:  ollama pull gemma4:e4b
+
+$ ./wiki ingest notes/elsewhere.md     # source outside vault/raw
+  search index rebuilt: 121 passages (no model needed for this step)
+  no source matches ['notes/elsewhere.md']. Sources must be inside vault/raw.
+
+$ ./wiki chat --script missing.txt
+Script file not found: missing.txt
