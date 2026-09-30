@@ -417,6 +417,10 @@ if have_offline:
     w("| Four ask tests | `./wiki test` | [evidence/offline/ask/](evidence/offline/ask/) |")
     w("| Chat, search and separation checks | `./wiki test` | [evidence/offline/mode-checks/](evidence/offline/mode-checks/) |")
     w("")
+    if (E / "runs" / "offline-attempt-1-wifi-came-back").exists():
+        w("An earlier attempt at 16:33 was stopped because Wi-Fi came back on during ingestion. Its partial output is kept "
+          "in [evidence/runs/offline-attempt-1-wifi-came-back/](evidence/runs/offline-attempt-1-wifi-came-back/) "
+          "and is not used as offline evidence. The run above was repeated from the start with Wi-Fi off throughout.\n")
     for name in off_shots:
         w(f"![Offline run](evidence/offline/{name})\n")
 else:
