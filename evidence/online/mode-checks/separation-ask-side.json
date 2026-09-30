@@ -3,7 +3,7 @@
   "question": "What name did I decide on for my next project?",
   "uses_chat_history": false,
   "retrieval": {
-    "method": "BM25 keyword index over vault/raw",
+    "method": "BM25 keyword index over vault/raw, plus the source sections of the best-matching wiki note",
     "top_k": 4,
     "query_terms": [
       "name",
@@ -13,6 +13,21 @@
     ],
     "terms_not_in_index": [
       "decide"
+    ],
+    "routed_note": "Networking Tracker Overview",
+    "note_scores": [
+      [
+        3.73,
+        "Networking Tracker Overview"
+      ],
+      [
+        3.02,
+        "Custom LLM Lessons Learned"
+      ],
+      [
+        2.79,
+        "Custom LLM Project"
+      ]
     ],
     "passages": [
       {
@@ -29,6 +44,7 @@
           "name",
           "project"
         ],
+        "via": "keyword",
         "text": "```bash\ngit clone https://github.com/BuildingBrian/networking-tracker.git\ncd networking-tracker\nnpm install\n```\n\n**1. Create the Neon project** — either in the [Neon Console](https://console.neon.tech) (create a project → enable **Auth** → enable **Data API**) or with the CLI:\n\n```bash\nnpm i -g neon@latest && neon login\nneon neon-auth enable --project-id <id> --branch production\nneon data-api  create --project-id <id> --branch production --database neondb\nneon neon-auth domain allow-localhost enable --project-id <id> --branch production   # lets localhost sign in\n```\n\n**2. Configure the environment**\n\n```bash\ncp .env.example .env.local\nopenssl rand -base64 32        # → NEON_AUTH_COOKIE_SECRET\n```\n\nFill in `.env.local` with the Auth URL, Data API URL, and pooled connection string from Neon (`neon connection-string production --project-id <id> --database-name neondb --role-name neondb_owner --pooled`).\n\n**3. Apply the schema and RLS policies**\n\n```bash\nnpm run db:push\n```\n\nThis runs `db/schema.sql` over Neon's HTTP driver and then prints the RLS flags, every policy with its `USING` / `WITH CHECK` expression, and every column — so the security requirements are verifiable from the terminal."
       },
       {
@@ -44,6 +60,7 @@
         "matched_terms": [
           "name"
         ],
+        "via": "keyword",
         "text": "```\n ✓ tests/validation.test.ts > contact validation — name > rejects an empty name with a clear message\n ✓ tests/validation.test.ts > contact validation — name > rejects a name that is only whitespace\n ✓ tests/validation.test.ts > contact validation — name > rejects a missing name\n ✓ tests/validation.test.ts > contact validation — name > rejects a name longer than 200 characters\n ✓ tests/validation.test.ts > contact validation — name > trims surrounding whitespace from an otherwise valid name\n ✓ tests/validation.test.ts > contact validation — priority > accepts the valid priority \"high\"\n ✓ tests/validation.test.ts > contact validation — priority > accepts the valid priority \"medium\"\n ✓ tests/validation.test.ts > contact validation — priority > accepts the valid priority \"low\"\n ✓ tests/validation.test.ts > contact validation — priority > rejects a priority outside high / medium / low\n```"
       },
       {
@@ -59,6 +76,7 @@
         "matched_terms": [
           "project"
         ],
+        "via": "keyword",
         "text": "   `DATABASE_URL` is deliberately **not** added — the running app never uses it.\n4. `vercel --prod`.\n5. Add the deployed domain to Neon Auth's trusted origins so sign-in works there:\n\n   ```bash\n   neon neon-auth domain add https://<your-app>.vercel.app --project-id <id> --branch production\n   ```\n\n   For this deployment the public production domain `networking-tracker-gules.vercel.app` is registered. Vercel also generates a `<project>-<team>.vercel.app` alias, but Deployment Protection puts a Vercel login in front of it — so that one is deliberately *not* the URL in this README.\n6. Open the public URL in a private window, create two accounts, and confirm neither can see the other's contacts. The same can be automated: `TEST_APP_URL=https://<your-app>.vercel.app npm test`."
       },
       {
@@ -74,6 +92,7 @@
         "matched_terms": [
           "project"
         ],
+        "via": "keyword",
         "text": "`npm test` on 2026-09-08 against the live Neon project (`FORCE_COLOR=0 npx vitest run --reporter=verbose`, saved as [`docs/test-output.txt`](docs/test-output.txt)):"
       }
     ]
@@ -91,14 +110,14 @@
   },
   "model_stats": {
     "purpose": "ask",
-    "wall_seconds": 40.06,
-    "load_seconds": 0.4,
+    "wall_seconds": 29.01,
+    "load_seconds": 0.3,
     "prompt_tokens": 1223,
     "output_tokens": 6,
-    "prompt_tokens_per_s": 31.2,
-    "output_tokens_per_s": 15.1
+    "prompt_tokens_per_s": 43.2,
+    "output_tokens_per_s": 15.6
   },
-  "recorded_at": "2026-09-29 10:57:42 PDT",
+  "recorded_at": "2026-09-29 17:29:53 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",

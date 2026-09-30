@@ -1,7 +1,7 @@
 # Evidence card: ask
 
 - **Mode:** ask (standalone, no chat history) · **Execution:** local
-- **Recorded:** 2026-09-29 10:57:42 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
+- **Recorded:** 2026-09-29 17:29:53 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
 - **Model:** gemma4:e2b · 5.1B · Q4_K_M · digest 7fbdbf8f5e45 · Ollama 0.20.7
 - **Model memory:** 7.68 GB loaded, 100% CPU
 
@@ -14,7 +14,7 @@ What name did I decide on for my next project?
 Query terms: `name, decide, next, project` · not in any source: `decide`
 
 ### [1] `vault/raw/Networking Tracker README.md` › Local setup (lines 133–163)
-score 8.09 · matched: name, project
+score 8.09 · matched: name, project · found via keyword
 
 > ```bash
 > git clone https://github.com/BuildingBrian/networking-tracker.git
@@ -49,7 +49,7 @@ score 8.09 · matched: name, project
 > This runs `db/schema.sql` over Neon's HTTP driver and then prints the RLS flags, every policy with its `USING` / `WITH CHECK` expression, and every column — so the security requirements are verifiable from the terminal.
 
 ### [2] `vault/raw/Networking Tracker README.md` › Tests > Test output (lines 297–326)
-score 4.73 · matched: name
+score 4.73 · matched: name · found via keyword
 
 > ```
 >  ✓ tests/validation.test.ts > contact validation — name > rejects an empty name with a clear message
@@ -64,7 +64,7 @@ score 4.73 · matched: name
 > ```
 
 ### [3] `vault/raw/Networking Tracker README.md` › Deployment (lines 413–420)
-score 4.38 · matched: project
+score 4.38 · matched: project · found via keyword
 
 >    `DATABASE_URL` is deliberately **not** added — the running app never uses it.
 > 4. `vercel --prod`.
@@ -78,7 +78,7 @@ score 4.38 · matched: project
 > 6. Open the public URL in a private window, create two accounts, and confirm neither can see the other's contacts. The same can be automated: `TEST_APP_URL=https://<your-app>.vercel.app npm test`.
 
 ### [4] `vault/raw/Networking Tracker README.md` › Tests > Test output (lines 295–295)
-score 4.26 · matched: project
+score 4.26 · matched: project · found via keyword
 
 > `npm test` on 2026-09-08 against the live Neon project (`FORCE_COLOR=0 npx vitest run --reporter=verbose`, saved as [`docs/test-output.txt`](docs/test-output.txt)):
 
@@ -102,7 +102,7 @@ INSUFFICIENT EVIDENCE
 
 ## Timing
 
-40.06 s total · prompt 1223 tokens at 31.2 tokens/s · answer 6 tokens at 15.1 tokens/s
+29.01 s total · prompt 1223 tokens at 43.2 tokens/s · answer 6 tokens at 15.6 tokens/s
 
 ## My assessment
 

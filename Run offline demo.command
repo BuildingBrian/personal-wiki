@@ -38,7 +38,6 @@ python3 scripts/build_readme.py
 git add -A
 git commit -q -m "Offline demonstration: ingestion, four ask tests and mode checks with Wi-Fi off" && echo "committed"
 echo
-echo "Ready to publish to GitHub. Press Return to push, or Ctrl+C to stop and review evidence/offline/ first."
-read
-git push origin main && echo && echo "PUBLISHED. Submit this URL:  https://github.com/BuildingBrian/personal-wiki"
+echo "Committed on this Mac, not published yet. The assessments are written against these offline answers first."
+echo "Go back to Claude and say: done, push it"
 echo; echo "Press Return to close."; read

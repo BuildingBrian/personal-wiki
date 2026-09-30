@@ -3,7 +3,7 @@
   "question": "What was the mean evaluation score of the Pac-Man agent before and after training?",
   "uses_chat_history": false,
   "retrieval": {
-    "method": "BM25 keyword index over vault/raw",
+    "method": "BM25 keyword index over vault/raw, plus the source sections of the best-matching wiki note",
     "top_k": 4,
     "query_terms": [
       "mean",
@@ -15,6 +15,21 @@
       "train"
     ],
     "terms_not_in_index": [],
+    "routed_note": "Pac-Man DQN Project",
+    "note_scores": [
+      [
+        10.37,
+        "Pac-Man DQN Project"
+      ],
+      [
+        9.84,
+        "Pac-Man Training Results"
+      ],
+      [
+        9.28,
+        "Pac-Man Gameplay Progress"
+      ]
+    ],
     "passages": [
       {
         "rank": 1,
@@ -35,6 +50,7 @@
           "agent",
           "train"
         ],
+        "via": "keyword",
         "text": "**Brian Arevalo Ramos · MBA 290T Fundamentals of Agentic AI · Class 3 / Assignment 2**\n\nI trained the course's ready-made Deep Q-Network (DQN) on `ALE/MsPacman-v5` with three choices of my own:\n**exploration 0.10, 500 training games, learning rate 0.0001.** Everything below comes from one executed run of\n[`pacman_dqn.ipynb`](pacman_dqn.ipynb) on my Intel MacBook Pro (CPU). The notebook is saved **with all cell outputs**\nfrom that final run, and the evidence it produced is copied into [`results/`](results/).\n\n[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/BuildingBrian/pacman-dqn/blob/main/pacman_dqn.ipynb)\n\n| | Untrained network | Trained agent |\n|---|---|---|\n| Mean score over the same 5 evaluation games | **492.0** | **608.0** |\n| First 20 s of one evaluation game (4× speed) | ![Untrained gameplay](results/demos/episode_0000.gif) | ![Best trained gameplay](results/demos/final_best.gif) |\n\nChange in mean score: **+116.0**. The five individual scores are in the [results table](#the-five-before-and-after-scores)."
       },
       {
@@ -54,6 +70,7 @@
           "agent",
           "train"
         ],
+        "via": "keyword",
         "text": "Same five seeds (101, 202, 303, 404, 505), same 5 % evaluation exploration, same 3,000-decision cap, before and\nafter training. The baseline is the **untrained network**, not a random-action agent.\n\n| Game | Seed | Untrained score | Trained score | Change |\n|---|---|---|---|---|\n| 1 | 101 | 350 | 530 | +180 |\n| 2 | 202 | 500 | 520 | +20 |\n| 3 | 303 | 320 | 680 | +360 |\n| 4 | 404 | 800 | 640 | -160 |\n| 5 | 505 | 490 | 670 | +180 |\n| **Mean** | | **492.0** | **608.0** | **+116.0** |\n\nFull evaluation record with game lengths: [`comparison.json`](results/comparison.json) ·\n[`baseline.json`](results/baseline.json). No game hit the 3,000-decision time limit before or after training; every game ended at game over."
       },
       {
@@ -73,41 +90,40 @@
           "agent",
           "train"
         ],
+        "via": "keyword",
         "text": "- **Untrained baseline around 300–800 points per game** (the setup check's untrained network averaged 492). A random\n  network still eats pellets because Ms. Pac-Man keeps moving in whatever direction the joystick last said, so \"doing\n  nothing useful\" is worth a few hundred points before the ghosts arrive. - **Modest, noisy improvement, not mastery.** I expected the trained mean to land somewhere around 600–900: the agent\n  should learn that continuing along an unfinished pellet row pays, and that some moves near ghosts end the game. I did\n  not expect deliberate ghost avoidance, power-pellet hunting, or clearing a maze, because 500 games is roughly\n  1–2 % of the experience the original DQN paper used, and the replay memory here holds 0.5 % of the paper's. - **A jagged training curve** with a 25-game average that drifts up slowly and can fall back, and **a loss that does not\n  simply go down** (as the network's value estimates grow, the targets move with them)."
       },
       {
         "rank": 4,
-        "id": "S3-P022",
+        "id": "S3-P019",
         "path": "vault/raw/Pac-Man DQN README.md",
-        "section": "6. One limitation I observed",
+        "section": "5. What the agent sees, does, and is rewarded for (plain language)",
         "lines": [
-          222,
-          231
+          202,
+          216
         ],
-        "score": 10.55,
+        "score": 9.52,
         "matched_terms": [
-          "mean",
           "evalu",
           "score",
           "agent",
           "train"
         ],
-        "text": "**The agent did not learn to avoid ghosts, and 500 games with a 5,000-decision memory were not enough to expect it to.**\nTrained games were no longer than untrained games (571 vs 589 decisions), the seed-101 checkpoint score swung between\n190 and 1,100 with no trend, and the 25-game average plateaued after roughly game 25. Two design choices in this\nclassroom DQN explain most of that. First, the replay memory holds about eight games, so every update is drawn from the\nagent's most recent behavior and older lessons are overwritten (the original DQN paper kept 1,000,000 transitions).\nSecond, losing a life carries no negative reward, so a death only shows up indirectly as future points that never\narrive, a weak signal when the future is discounted by 0.99 per decision and every reward is clipped to ±1. A smaller\nbut real caveat on the headline number: five evaluation games is a small sample, and one of the five (seed 404) got\n*worse* (800 → 640), so the +116 mean improvement is real for this run but should not be read as a precise measure of\nthe agent's skill."
+        "via": "wiki note: Pac-Man DQN Project",
+        "text": "- **Observations — four game screens.** Each decision, the agent does not see the colorful Atari frame. It sees the last\n  four screens shrunk to 84 × 84 grayscale pixels and stacked together. One screen shows *where* everything is; four in a\n  row show *which way* everything is moving. That is the entire input: no maze map, no ghost coordinates, no score. - **Actions — joystick moves.** The network outputs nine numbers, one per joystick position: no-op, up, right, left,\n  down, and the four diagonals. Each number is the network's *guess* at how many future points that move leads to. Most of the time the agent takes the highest guess; 10 % of the time during training (5 % during evaluation) it picks\n  a random move instead. One decision holds the joystick for four game frames."
       }
     ]
   },
   "status": "answered",
   "reason": null,
-  "raw_model_reply": "The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].",
-  "answer": "The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].",
+  "raw_model_reply": "[1] The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1]. The change in mean score was +116.0 [1].",
+  "answer": "[1] The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1]. The change in mean score was +116.0 [1].",
   "citation_check": {
     "cited": [
-      1,
-      2
+      1
     ],
     "valid_citations": [
-      1,
-      2
+      1
     ],
     "invalid_citations": [],
     "figures_in_answer": [
@@ -119,14 +135,14 @@
   },
   "model_stats": {
     "purpose": "ask",
-    "wall_seconds": 41.49,
-    "load_seconds": 0.3,
-    "prompt_tokens": 1654,
-    "output_tokens": 60,
-    "prompt_tokens_per_s": 44.9,
-    "output_tokens_per_s": 14.0
+    "wall_seconds": 50.49,
+    "load_seconds": 12.59,
+    "prompt_tokens": 1565,
+    "output_tokens": 55,
+    "prompt_tokens_per_s": 46.6,
+    "output_tokens_per_s": 14.1
   },
-  "recorded_at": "2026-09-29 10:53:40 PDT",
+  "recorded_at": "2026-09-29 17:26:24 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",
@@ -169,6 +185,9 @@
   },
   "expected_passage_rank": [
     1,
+    2
+  ],
+  "expected_section_rank": [
     2
   ]
 }

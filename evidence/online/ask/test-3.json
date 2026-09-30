@@ -3,7 +3,7 @@
   "question": "How does the networking tracker stop one user from reading another user's contacts?",
   "uses_chat_history": false,
   "retrieval": {
-    "method": "BM25 keyword index over vault/raw",
+    "method": "BM25 keyword index over vault/raw, plus the source sections of the best-matching wiki note",
     "top_k": 4,
     "query_terms": [
       "network",
@@ -15,6 +15,21 @@
       "contact"
     ],
     "terms_not_in_index": [],
+    "routed_note": "Row Level Security",
+    "note_scores": [
+      [
+        13.15,
+        "Row Level Security"
+      ],
+      [
+        9.66,
+        "Networking Tracker Architecture"
+      ],
+      [
+        9.17,
+        "Networking Tracker Overview"
+      ]
+    ],
     "passages": [
       {
         "rank": 1,
@@ -34,6 +49,7 @@
           "another",
           "contact"
         ],
+        "via": "keyword",
         "text": "**Two-account privacy test against production — `TEST_APP_URL=https://networking-tracker-gules.vercel.app npx vitest run tests/rls.test.ts`** (accounts created through the live app's auth proxy; every assertion sent straight to the public Data API with each user's JWT):\n\n```\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A can read their own contact 1354ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot SELECT User A's contact, even by its exact ID 374ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B does not see User A's contact in an unfiltered list 380ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot UPDATE User A's contact 749ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot DELETE User A's contact 740ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot INSERT a row owned by User A 761ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A cannot hand their own row to User B via UPDATE 1884ms\n Test Files  1 passed (1)\n      Tests  7 passed (7)\n```"
       },
       {
@@ -52,60 +68,57 @@
           "another",
           "contact"
         ],
+        "via": "keyword",
         "text": "```\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A can read their own contact\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot SELECT User A's contact, even by its exact ID\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B does not see User A's contact in an unfiltered list\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot UPDATE User A's contact\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot DELETE User A's contact\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot INSERT a row owned by User A\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A cannot hand their own row to User B via UPDATE\n```"
       },
       {
         "rank": 3,
-        "id": "S2-P001",
+        "id": "S2-P017",
         "path": "vault/raw/Networking Tracker README.md",
-        "section": "Networking Tracker",
+        "section": "Authentication and RLS ownership",
         "lines": [
-          3,
-          7
+          249,
+          265
         ],
-        "score": 12.97,
+        "score": 10.85,
         "matched_terms": [
-          "network",
-          "tracker",
           "user",
+          "read",
+          "another",
           "contact"
         ],
-        "text": "A private, per-user networking tracker for the people you want to stay connected with at Berkeley. Sign up, add the people you meet — name, company, role, where you met, notes, and a priority — then sort, filter, edit, and delete them. Every contact belongs to exactly one account, and that ownership is enforced by **Row Level Security inside Postgres** rather than by application code, so the data stays private even against a request made directly to the public Data API with a valid login.\n\n**Live app:** **https://networking-tracker-gules.vercel.app**\n\n**Repository:** https://github.com/BuildingBrian/networking-tracker"
+        "via": "wiki note: Row Level Security",
+        "text": "**Why `UPDATE` needs both clauses.** `USING` decides which rows a statement may *target*; `WITH CHECK` decides what those rows may look like *afterwards*. With `USING` alone, a user could edit a row they own and reassign `user_id` to someone else on the way out — handing their row to another account. `WITH CHECK` rejects any result that would no longer belong to the caller. The `BEFORE UPDATE` trigger additionally pins `user_id` to its old value, so even a future policy mistake could not silently transfer ownership.\n\nThe `anonymous` role is granted nothing on this table, so an unauthenticated request to the public Data API cannot read a single row.\n\n`npm run db:push` prints what is actually in the database. Against the live project it reports:\n\n```\nRLS enabled: true   forced: true\n\n4 policies on public.contacts:\n  DELETE contacts_delete_own   USING (auth.user_id() = user_id)\n  INSERT contacts_insert_own   WITH CHECK (auth.user_id() = user_id)\n  SELECT contacts_select_own   USING (auth.user_id() = user_id)\n  UPDATE contacts_update_own   USING (auth.user_id() = user_id)   WITH CHECK (auth.user_id() = user_id)\n\nuser_id   text   NOT NULL   default auth.user_id()\n```"
       },
       {
         "rank": 4,
-        "id": "S2-P027",
+        "id": "S2-P016",
         "path": "vault/raw/Networking Tracker README.md",
-        "section": "Production verification",
+        "section": "Authentication and RLS ownership",
         "lines": [
-          349,
-          374
+          224,
+          247
         ],
-        "score": 11.77,
+        "score": 7.69,
         "matched_terms": [
-          "network",
-          "tracker",
           "user",
           "contact"
         ],
-        "text": "Everything above was re-run against the deployed app, not just locally. Deployment `dpl_…ado1a7ss5` (built 2026-09-08 22:31 PDT from stored Vercel environment variables, nothing passed inline) is what `https://networking-tracker-gules.vercel.app` serves.\n\n**Black-box lifecycle — `BASE_URL=https://networking-tracker-gules.vercel.app npm run verify`:**\n\n```\nVerifying https://networking-tracker-gules.vercel.app\n\n✓ sign-in page renders  (HTTP 200)\n✓ GET /api/contacts without a session → 401  (HTTP 401)\n✓ /contacts without a session redirects to sign-in  (HTTP 307 → /auth/sign-in)\n✓ sign-up succeeds and sets a session cookie  (HTTP 200, cookies: 2)\n✓ new account starts with an empty list  (HTTP 200, 0 contacts)\n✓ blank name + invalid priority → 400 with per-field errors  (HTTP 400: Name is required.)\n✓ create → 201 with user_id stamped by the database  (HTTP 201, id f499ce1d-7168-4c3e-a1bc-549f603c6e2c)\n✓ created contact appears in the list  (1 contacts)\n✓ edit → 200 and the change is applied  (HTTP 200)\n✓ attempt to reassign user_id is ignored; row stays owned by caller  (user_id unchanged)\n✓ priority filter works (low → 1, high → 0)  (low 1, high 0)\n✓ delete → 200  (HTTP 200)\n✓ deleting it again → 404  (HTTP 404)\n✓ list is empty again  (0 contacts)\n✓ sign-out → 200  (HTTP 200)\n✓ API refuses the request after sign-out → 401  (HTTP 401)\n\n16 passed, 0 failed\n```"
+        "via": "wiki note: Row Level Security",
+        "text": "When a user signs in, Neon Auth issues a JWT. Every Data API request carries that JWT, and Postgres exposes its subject as **`auth.user_id()`**. `contacts.user_id` defaults to that value, so the database — not the application — decides who owns a row.\n\nRLS is **enabled and forced** on `contacts` (forced so it applies to the table owner too), with four separate policies:\n\n```sql\ncreate policy contacts_select_own on public.contacts\n  for select to authenticated\n  using (auth.user_id() = user_id);\n\ncreate policy contacts_insert_own on public.contacts\n  for insert to authenticated\n  with check (auth.user_id() = user_id);\n\ncreate policy contacts_update_own on public.contacts\n  for update to authenticated\n  using (auth.user_id() = user_id)\n  with check (auth.user_id() = user_id);\n\ncreate policy contacts_delete_own on public.contacts\n  for delete to authenticated\n  using (auth.user_id() = user_id);\n```\n\n**The ownership rule in one sentence:** a row is reachable only when `auth.user_id() = user_id`."
       }
     ]
   },
   "status": "answered",
   "reason": null,
-  "raw_model_reply": "Row Level Security inside Postgres enforces that every contact belongs to exactly one account, which keeps the data private even when a request is made directly to the public Data API with a valid login [3]. This mechanism prevents one user from reading another user's contacts [1, 2].",
-  "answer": "Row Level Security inside Postgres enforces that every contact belongs to exactly one account, which keeps the data private even when a request is made directly to the public Data API with a valid login [3]. This mechanism prevents one user from reading another user's contacts [1, 2].",
+  "raw_model_reply": "One user cannot reach another user's contacts because of Row Level Security (RLS) policies [4]. The ownership rule is that a row is reachable only when `auth.user_id() = user_id` [4]. This is enforced by policies such as `contacts_select_own` which uses the condition `auth.user_id() = user_id` for selecting contacts [4].",
+  "answer": "One user cannot reach another user's contacts because of Row Level Security (RLS) policies [4]. The ownership rule is that a row is reachable only when `auth.user_id() = user_id` [4]. This is enforced by policies such as `contacts_select_own` which uses the condition `auth.user_id() = user_id` for selecting contacts [4].",
   "citation_check": {
     "cited": [
-      1,
-      2,
-      3
+      4
     ],
     "valid_citations": [
-      1,
-      2,
-      3
+      4
     ],
     "invalid_citations": [],
     "figures_in_answer": [],
@@ -113,14 +126,14 @@
   },
   "model_stats": {
     "purpose": "ask",
-    "wall_seconds": 39.75,
-    "load_seconds": 0.34,
-    "prompt_tokens": 1698,
-    "output_tokens": 58,
-    "prompt_tokens_per_s": 48.1,
-    "output_tokens_per_s": 14.3
+    "wall_seconds": 49.61,
+    "load_seconds": 0.26,
+    "prompt_tokens": 1647,
+    "output_tokens": 85,
+    "prompt_tokens_per_s": 38.4,
+    "output_tokens_per_s": 13.4
   },
-  "recorded_at": "2026-09-29 10:54:55 PDT",
+  "recorded_at": "2026-09-29 17:27:49 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",
@@ -161,5 +174,9 @@
     ],
     "expected_answer": "Row Level Security inside Postgres: a row is reachable only when auth.user_id() = user_id, enforced by the database rather than application code."
   },
-  "expected_passage_rank": []
+  "expected_passage_rank": [],
+  "expected_section_rank": [
+    3,
+    4
+  ]
 }

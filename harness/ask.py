@@ -21,7 +21,8 @@ def tidy(reply):
     """A small model sometimes copies a table out of a passage before answering. The answer shown is the prose;
     the untouched reply is kept in the evidence record as raw_model_reply."""
     lines = [l for l in reply.splitlines() if not l.lstrip().startswith("|")]
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+    text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+    return re.sub(r"^" + CITATION + r"\s*", "", text)      # a bare "[1]" opening the answer; later citations stay
 
 
 def check_citations(answer, hits):
@@ -39,14 +40,16 @@ def check_citations(answer, hits):
 
 def run(question, k=config.TOP_K, out=None, quiet=False):
     out = out or sys.stdout
-    retrieved = index.search(question, k)
+    retrieved = index.retrieve(question, k)
     hits = retrieved["hits"]
     record = {"mode": "ask", "question": question, "uses_chat_history": False,
-              "retrieval": {"method": "BM25 keyword index over vault/raw", "top_k": k,
+              "retrieval": {"method": "BM25 keyword index over vault/raw, plus the source sections of the "
+                                      "best-matching wiki note", "top_k": k,
                             "query_terms": retrieved["query_terms"],
                             "terms_not_in_index": retrieved["terms_not_in_index"],
+                            "routed_note": retrieved["routed_note"], "note_scores": retrieved["note_scores"],
                             "passages": [{key: h[key] for key in ("rank", "id", "path", "section", "lines", "score",
-                                                                  "matched_terms", "text")} for h in hits]}}
+                                                                  "matched_terms", "via", "text")} for h in hits]}}
     if not hits:
         record.update(status="insufficient_evidence", reason="retrieval returned no passage", raw_model_reply=None,
                       answer=REFUSAL, citation_check=None, model_stats=None)
@@ -79,7 +82,8 @@ def show(record, out):
         print("\nCitations:", file=out)
         for n in check["valid_citations"]:
             p = passages[n - 1]
-            print(f"  [{n}] {p['path']}  ›  {p['section']}  (lines {p['lines'][0]}–{p['lines'][1]})", file=out)
+            via = f"   (found via {p['via']})" if p.get("via", "keyword") != "keyword" else ""
+            print(f"  [{n}] {p['path']}  ›  {p['section']}  (lines {p['lines'][0]}–{p['lines'][1]}){via}", file=out)
         if check["invalid_citations"]:
             print(f"  WARNING: the answer cites {check['invalid_citations']}, which were not retrieved.", file=out)
         if check["figures_not_in_cited_passages"]:
@@ -94,6 +98,22 @@ def show(record, out):
         s = record["model_stats"]
         print(f"\n({s['wall_seconds']} s · read {s['prompt_tokens']} tokens at {s['prompt_tokens_per_s']}/s · "
               f"wrote {s['output_tokens']} at {s['output_tokens_per_s']}/s · model memory {record['memory']['loaded_gb']} GB)", file=out)
+
+
+def expected_ranks(test, passages):
+    """Ranks of retrieved passages that contain every expected string (the check written with the questions)."""
+    return [p["rank"] for p in passages
+            if test.get("expected_source") and p["path"] == test["expected_source"]
+            and all(s.lower() in p["text"].lower() for s in test.get("expected_passage_contains", []))]
+
+
+def expected_section_ranks(test, passages):
+    """Ranks of retrieved passages from the expected section, also written with the questions. Added after run 3:
+    test 3's expected section says "RLS" and never "Row Level Security", so the string check could not pass there."""
+    section = test.get("expected_section")
+    return [p["rank"] for p in passages
+            if section and p["path"] == test.get("expected_source")
+            and (p["section"] == section or p["section"].endswith("> " + section))]
 
 
 def card(record, test=None, assessment=None):
@@ -119,7 +139,7 @@ def card(record, test=None, assessment=None):
               + (f" · not in any source: `{', '.join(record['retrieval']['terms_not_in_index'])}`" if record['retrieval']['terms_not_in_index'] else ""), ""]
     for p in record["retrieval"]["passages"]:
         lines += [f"### [{p['rank']}] `{p['path']}` › {p['section']} (lines {p['lines'][0]}–{p['lines'][1]})",
-                  f"score {p['score']} · matched: {', '.join(p['matched_terms'])}", "",
+                  f"score {p['score']} · matched: {', '.join(p['matched_terms'])} · found via {p.get('via', 'keyword')}", "",
                   "\n".join("> " + l for l in p["text"].splitlines()), ""]
     lines += ["## Actual answer", "", f"**Status:** {record['status']}"
               + (f" — {record['reason']}" if record.get("reason") else ""), "", record["answer"], ""]
@@ -136,11 +156,15 @@ def card(record, test=None, assessment=None):
         lines += ["## Timing", "", f"{s['wall_seconds']} s total · prompt {s['prompt_tokens']} tokens at "
                   f"{s['prompt_tokens_per_s']} tokens/s · answer {s['output_tokens']} tokens at {s['output_tokens_per_s']} tokens/s", ""]
     if test:
-        expected_found = [p["rank"] for p in record["retrieval"]["passages"]
-                          if test.get("expected_source") and p["path"] == test["expected_source"]
-                          and all(s.lower() in p["text"].lower() for s in test.get("expected_passage_contains", []))]
-        lines += ["## Automatic checks", "",
-                  f"- Expected passage retrieved at rank: {expected_found or 'NOT RETRIEVED'}"
-                  if test["kind"] == "answerable" else "- Expected behavior: insufficient evidence", ""]
+        expected_found = expected_ranks(test, record["retrieval"]["passages"])
+        section_found = expected_section_ranks(test, record["retrieval"]["passages"])
+        lines += ["## Automatic checks", ""]
+        if test["kind"] == "answerable":
+            lines += [f"- Passage containing all expected strings {test.get('expected_passage_contains')}: "
+                      f"rank {expected_found or 'NOT RETRIEVED'}",
+                      f"- Passage from the expected section \"{test.get('expected_section')}\": "
+                      f"rank {section_found or 'NOT RETRIEVED'}", ""]
+        else:
+            lines += ["- Expected behavior: insufficient evidence", ""]
     lines += ["## My assessment", "", assessment or "_to be written after reading the cited passages_", ""]
     return "\n".join(lines)

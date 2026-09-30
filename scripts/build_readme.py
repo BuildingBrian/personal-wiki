@@ -28,6 +28,14 @@ online = load_tests(E / "online")
 offline = load_tests(E / "offline")
 run1 = [J(p) for p in sorted((E / "runs" / "run-1-initial").glob("test-*.json"))]
 run2 = [J(p) for p in sorted((E / "runs" / "run-2-after-rule-change").glob("test-*.json"))]
+run3 = load_tests(E / "runs" / "run-3-offline-before-routing")
+
+
+def section_ranks(t):
+    """Expected-section ranks for a record saved before the harness recorded them itself."""
+    sec, src = t["test"].get("expected_section"), t["test"].get("expected_source")
+    return [p["rank"] for p in t["retrieval"]["passages"]
+            if sec and p["path"] == src and (p["section"] == sec or p["section"].endswith("> " + sec))]
 assess = J(ROOT / "tests" / "assessments.json") if (ROOT / "tests" / "assessments.json").exists() else {}
 catalog = J(ROOT / "data" / "catalog.json")["sources"]
 plan = J(ROOT / "data" / "plan.json")
@@ -47,9 +55,10 @@ def status_word(t):
 
 def test_row(t, where):
     rank = t.get("expected_passage_rank") or "—"
+    section = t.get("expected_section_rank") or "—"
     cited = (t.get("citation_check") or {}).get("valid_citations", [])
     secs = (t.get("model_stats") or {}).get("wall_seconds", "—")
-    return (f"| {t['test']['id']} | {t['question']} | {t['test']['kind']} | {status_word(t)} | {rank} | "
+    return (f"| {t['test']['id']} | {t['question']} | {t['test']['kind']} | {status_word(t)} | {rank} | {section} | "
             f"{cited or '—'} | {secs} s | [card]({where}/ask/{t['test']['id']}.md) |")
 
 
@@ -84,15 +93,16 @@ if have_offline:
 else:
     w("> **Offline run pending.** The results below are from the local model with the laptop still connected. "
       "The offline demonstration is run with `Run offline demo.command` after turning Wi-Fi off.\n")
-w("| Test | Question | Kind | Result | Expected passage retrieved at rank | Passages cited | Time | Evidence |")
-w("|---|---|---|---|---|---|---|---|")
+w("| Test | Question | Kind | Result | Passage with expected strings, rank | Expected section, rank | Passages cited | Time | Evidence |")
+w("|---|---|---|---|---|---|---|---|---|")
 where = "evidence/offline" if have_offline else "evidence/online"
 for t in best:
     w(test_row(t, where))
 w(f"""
 Three answerable questions were answered from retrieved passages with checked citations, and the question my
 sources cannot answer got an explicit refusal. It did not work the first time: [section 8](#8-what-failed-first-and-what-i-changed)
-keeps the first run, where test 2 failed, and the two bugs in my own harness that it exposed.
+keeps the first run, where test 2 failed, the two bugs in my own harness that it exposed, and the retrieval change
+that got test 3 its right section (runs 3 and 4).
 
 ## 1. Purpose and sources
 
@@ -223,12 +233,13 @@ flowchart LR
     A --> E["evidence.py<br/>evidence cards"]
     I --> W[("vault/wiki notes<br/>vault/index.md")]
     I --> R
+    W -.->|"routing: which note's source<br/>sections to add (ask, search)"| R
 ```
 
 | Part | What it is here | File |
 |---|---|---|
 | **Model** | Local Gemma. It generates text from the instructions and context it is given. It does not read my files, remember conversations or decide anything about retrieval. | called only from [`harness/model.py`](harness/model.py) |
-| **Retrieval tool** | Code that searches a local keyword index and returns original passages with source path, section and line numbers. Works with the model switched off. | [`harness/index.py`](harness/index.py), [`harness/chunking.py`](harness/chunking.py) |
+| **Retrieval tool** | Code that searches a local keyword index and returns original passages with source path, section and line numbers. For `ask` and `search` it also finds the reviewed wiki note that best matches the question and adds up to two passages from that note's source sections. What it returns is always original source text. Works with the model switched off. | [`harness/index.py`](harness/index.py), [`harness/chunking.py`](harness/chunking.py) |
 | **RAG workflow** | Retrieve passages, put them in a prompt, have the model answer from them. Used by `ask` always and by `chat` sometimes. It supplies context at answer time. It does not train Gemma: the weights never change. | [`harness/ask.py`](harness/ask.py) |
 | **CLI** | The terminal interface. It parses one command and hands it to one mode. | [`wiki`](wiki), [`harness/cli.py`](harness/cli.py) |
 | **Harness** | Everything around the model: mode selection, instructions and persona, conversation context, the retrieval decision, prompt assembly, the model call, citation checks, error messages and saved outputs. | [`harness/`](harness/) |
@@ -238,7 +249,7 @@ flowchart LR
 `./wiki ask "What was the mean evaluation score of the Pac-Man agent before and after training?"`
 
 1. [`wiki`](wiki) calls `cli.main()`, which parses the command and calls `ask.run(question)`. No chat history exists in this process.
-2. `ask.run` calls `index.search`. [`textutil.terms`](harness/textutil.py) lowercases the question, drops stopwords and strips endings, giving `mean, evalu, score, pac, man, agent, train`. BM25 scores every passage and returns the top 4 with path, section and line numbers.
+2. `ask.run` calls `index.retrieve`. [`textutil.terms`](harness/textutil.py) lowercases the question, drops stopwords and strips endings, giving `mean, evalu, score, pac, man, agent, train`. BM25 scores every passage. `index.route` scores the 22 wiki notes the same way; the best one here is "Pac-Man DQN Project". Up to two passages from that note's source sections that share at least 2 terms with the question replace the weakest keyword hits. The result is 4 passages with path, section, line numbers and how each was found.
 3. `ask.build_messages` reads the research rules from [`prompts/wiki-instructions.md`](prompts/wiki-instructions.md) as the system message. The user message is the question, the four numbered passages with their source labels, and the question again.
 4. `model.chat` posts that to `http://127.0.0.1:11434/api/chat` with thinking off, temperature 0.1, context 4096 and at most 220 output tokens, and measures the timing.
 5. Back in `ask.run`: if the reply contains `INSUFFICIENT EVIDENCE`, the answer is the refusal. Otherwise `check_citations` confirms that every `[n]` refers to a passage that was actually retrieved and that every figure in the answer appears in a cited passage. An answer with no valid citation is withheld and reported as insufficient evidence.
@@ -262,8 +273,8 @@ flowchart LR
 w(f"""| Choice | Value | Why |
 |---|---|---|
 | Passage size | about 130 words, at most 190 | Four passages are about 1,500 tokens, which this CPU reads in about 25 seconds. Passages are cut at headings and paragraph boundaries; long tables are cut by rows with the header repeated so a row never loses its column names. |
-| Retrieval method | BM25 keyword index, heading words counted twice | No download, no embedding model, works offline by construction, and I can explain every score. Its weakness, wording, is exactly what test 2 probes. |
-| What is indexed | The original sources only | Citations must point to evidence, not to a model's summary of it. Wiki notes are for me to browse; each one links back to its source section. |
+| Retrieval method | BM25 keyword index, heading words counted twice, plus routing through the best-matching wiki note (at most 2 of the 4 passages) | No download, no embedding model, works offline by construction, and I can explain every score. Keyword search misses a section that says the same thing in other words; test 3 showed it (section 8). The routing step uses the reviewed notes, whose titles and summaries name the concept ("Row Level Security"), to reach the source section the question did not share words with. |
+| What is indexed | The original sources as evidence; the wiki notes only for routing | Citations must point to evidence, not to a model's summary of it. A note is never sent to Gemma. It only decides which of its source sections join the candidates. |
 | Passages per question | 4 for ask, 3 for chat | More passages means more reading time and more distraction for a small model. |
 | Context window | 4096 tokens in every mode | Changing the context size makes the runtime reload the model, which costs about 11 seconds. |
 | Research rules | [`prompts/wiki-instructions.md`](prompts/wiki-instructions.md) | Neutral voice, cite every fact, copy figures exactly, refuse in two fixed words so the harness can detect it. |
@@ -330,7 +341,8 @@ for t in best:
     w(f"- **Expected:** {t['test']['expected_answer']}" + (f" Source: `{t['test']['expected_source']}` › {t['test'].get('expected_section')}." if t['test']['expected_source'] else ""))
     w("- **Retrieved passages:**")
     for p in t["retrieval"]["passages"]:
-        w(f"  {p['rank']}. `{p['path']}` › {p['section']} (lines {p['lines'][0]}–{p['lines'][1]}, score {p['score']})")
+        via = f", found via {p['via']}" if p.get("via", "keyword") != "keyword" else ""
+        w(f"  {p['rank']}. `{p['path']}` › {p['section']} (lines {p['lines'][0]}–{p['lines'][1]}, score {p['score']}{via})")
     w(f"- **Actual answer ({status_word(t)}):** {one_line(t['answer'])}")
     if t["status"] == "answered":
         w(f"- **Citation check by the harness:** cited {c['valid_citations']}, all retrieved; figures in the answer "
@@ -345,12 +357,20 @@ w("""## 8. What failed first, and what I changed
 if run1:
     w("The first run is kept untouched in [`evidence/runs/run-1-initial/`](evidence/runs/run-1-initial/).\n")
     w("Run 2 is kept in [`evidence/runs/run-2-after-rule-change/`](evidence/runs/run-2-after-rule-change/).\n")
-    w("| Test | Run 1 | Run 2 | Final run | Expected passage rank |")
-    w("|---|---|---|---|---|")
+    if run3:
+        w("Run 3, the first complete offline run, used keyword retrieval only and is kept in "
+          "[`evidence/runs/run-3-offline-before-routing/`](evidence/runs/run-3-offline-before-routing/). "
+          "The final run is run 4.\n")
+    w("| Test | Run 1 | Run 2 | Run 3 (offline, keyword only) | Final run | Expected section rank, run 3 → final |")
+    w("|---|---|---|---|---|---|")
     for a in run1:
         b = next((t for t in best if t["test"]["id"] == a["test"]["id"]), None)
         c = next((t for t in run2 if t["test"]["id"] == a["test"]["id"]), None)
-        w(f"| {a['test']['id']} | {status_word(a)} | {status_word(c) if c else '—'} | {status_word(b) if b else '—'} | {a.get('expected_passage_rank') or '—'} |")
+        d = next((t for t in run3 if t["test"]["id"] == a["test"]["id"]), None)
+        before = section_ranks(d) if d else "—"
+        after = (b.get("expected_section_rank") or "—") if b else "—"
+        w(f"| {a['test']['id']} | {status_word(a)} | {status_word(c) if c else '—'} | {status_word(d) if d else '—'} | "
+          f"{status_word(b) if b else '—'} | {before or '—'} → {after} |")
 w("""
 **The failure: test 2.** The right passage was retrieved at rank 3 ("Negation transfer failed … it picked the negated
 word (`tea`)"), and a second supporting passage at rank 2, but the model replied INSUFFICIENT EVIDENCE. My
@@ -376,6 +396,23 @@ because it relied on one outside connection and this Mac's per-app firewall bloc
 the operating system (Wi-Fi power and default route) as well, and reports offline only when there is no route and no
 probe succeeds. And model memory was read before the model had loaded. Details in the
 [run 1 notes](evidence/runs/run-1-initial/README.md).
+
+**The third failure, found after the first offline run: test 3 answered from the wrong section.** The answer was
+correct, but thin. Its passages were the test output and the production check, which show *that* one user cannot read
+another's contacts. The section that explains *how*, "Authentication and RLS ownership", ranked 6th and never reached
+Gemma. The cause is the limitation named in section 11. The question's words (networking tracker, another, user,
+reading, contacts) are repeated most in the passages that restate the result. The explaining section says "RLS",
+"policies" and `auth.user_id()` instead. The harness also had a flaw of its own: its automatic check looked for a
+passage containing both "Row Level Security" and `auth.user_id()`, but that section only ever says "RLS", so the check
+could not pass there even with perfect retrieval. I kept that check unchanged and added a second one, from the same
+test file written before the code: is a passage from the expected section retrieved?
+
+**The change.** A routing step in `index.retrieve`: the question is also scored against the 22 reviewed wiki notes,
+and up to two passages from the best note's source sections replace the weakest keyword hits. For test 3 the best
+note is "Row Level Security", and both passages of "Authentication and RLS ownership" now reach Gemma at ranks 3 and 4.
+Search uses the same retrieval, so what I inspect is what the model gets. I reran all four tests and the mode checks
+online and then offline (run 4). The other expected passages are still retrieved, and chat's retrieval decisions
+(which do not use routing) are unchanged at 0 misjudged of 17.
 
 ## 9. Mode checks
 """)

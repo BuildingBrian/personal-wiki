@@ -84,16 +84,17 @@ def run_tests(out_dir, only=None):
             print("=" * 100)
             record = ask.run(test["question"])
             record["test"] = test
-            found = [p["rank"] for p in record["retrieval"]["passages"]
-                     if test["expected_source"] and p["path"] == test["expected_source"]
-                     and all(s.lower() in p["text"].lower() for s in test["expected_passage_contains"])]
+            found = ask.expected_ranks(test, record["retrieval"]["passages"])
+            section = ask.expected_section_ranks(test, record["retrieval"]["passages"])
             record["expected_passage_rank"] = found
+            record["expected_section_rank"] = section
             evidence.save(out_dir / "ask", test["id"], record, ask.card(record, test))
-            summary.append((test["id"], test["kind"], record["status"], found))
+            summary.append((test["id"], test["kind"], record["status"], found, section))
             print()
         print("=" * 100)
         for row in summary:
-            print(f"  {row[0]}  {row[1]:<12} status={row[2]:<22} expected passage at rank {row[3] or '-'}")
+            print(f"  {row[0]}  {row[1]:<12} status={row[2]:<22} expected passage at rank {row[3] or '-'}"
+                  f"   expected section at rank {row[4] or '-'}")
         print(f"  evidence cards saved in {out_dir / 'ask'}")
     if only in (None, "modes"):
         checks = tests["mode_checks"]

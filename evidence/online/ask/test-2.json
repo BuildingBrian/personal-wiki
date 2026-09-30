@@ -3,7 +3,7 @@
   "question": "Which skill did my tiny language model fail to pick up, and what wrong word did it choose?",
   "uses_chat_history": false,
   "retrieval": {
-    "method": "BM25 keyword index over vault/raw",
+    "method": "BM25 keyword index over vault/raw, plus the source sections of the best-matching wiki note",
     "top_k": 4,
     "query_terms": [
       "skill",
@@ -17,6 +17,21 @@
       "choose"
     ],
     "terms_not_in_index": [],
+    "routed_note": "Custom LLM Chat Interface",
+    "note_scores": [
+      [
+        7.15,
+        "Custom LLM Chat Interface"
+      ],
+      [
+        6.94,
+        "Negation Failure"
+      ],
+      [
+        5.4,
+        "Custom LLM Project"
+      ]
+    ],
     "passages": [
       {
         "rank": 1,
@@ -34,6 +49,7 @@
           "model",
           "word"
         ],
+        "via": "keyword",
         "text": "**Interface:** the instructor's terminal loop [`chat.py`](chat.py) (unchanged) loading my Experiment 2 weights and vocabulary\nfrom `model.pt`. It is a tiny language model: it *continues* a prompt rather than answering it, each prompt starts with a fresh\ncontext (no conversation memory), unknown words are reported and mapped to `<UNK>`, and only the last 48 tokens of a long prompt are used.\nGenerating replies never updates weights or touches the corpus.\n\n**Launch (from the repo root, after the setup in section 8):**\n\n```bash\n.venv/bin/python chat.py --model evidence/expanded/model.pt --transcript my_chat.json\n```\n\nType a prompt, press Enter, type `/quit` to exit; the transcript is saved to the named file.\n\n**Model / run identity:** `llm_runs/20260922T044308_125561Z` (Experiment 2, 3,000 steps), model sha256 `5593b08e1e84afcc7a136b720178e4af76c4e360032c587074677d9d3066a2a3`.\n\n**Transcript** ([chat_transcript_terminal.json](evidence/expanded/chat_transcript_terminal.json), temperature 0.8, max 24 tokens, seeds 2026+turn):\n\n| # | Prompt | Model reply | Unknown words |\n|---|---|---|---|"
       },
       {
@@ -52,6 +68,7 @@
           "pick",
           "word"
         ],
+        "via": "keyword",
         "text": "she bought milk . ava bought\") → the model\n  chose **tea**, the negated word, i.e. it copied the first noun instead of the corrected one. `lang_31` chose `green`, a colour\n  that never appears in the prompt. Only `lang_33` was right. The free continuations agree it is not a fluke: for `lang_31`\n  it generated \"not grey .\" Given the corpus, the model learned the *shape* \"X is not A . it is B . X is\" but not which of A or B\n  to copy — with only 620 short stories and 2 layers, \"attend back to the word after *it is*\" did not emerge. Section 7 proposes the fix. * **Multiple choice ≠ free text.** `lang_30` (\"the opposite of noisy is\") picks `quiet` correctly among four choices, but its free\n  continuation was \"therapist .\" — a starter word."
       },
       {
@@ -70,25 +87,25 @@
           "pick",
           "word"
         ],
+        "via": "keyword",
         "text": "**Observed limitation.** Negation transfer failed (1/3, chance). The model learned the surface shape of the correction stories but,\nfaced with a new noun, it picked the *negated* word (`tea`) or an unrelated colour (`green`) rather than the corrected one. Copying\nthe right earlier token requires attention to key on the position after \"it is\" / \"she bought\", and 620 stories × 3,000 steps did not\nproduce that. A second, structural limitation: 15 of 48 evals stayed unscorable because the vocabulary is only what the corpus contains.\n\n**Next experiment (one change).** Keep steps, learning rate and the other files fixed, and change only the negation data: roughly\ntriple it (≈2,000 stories) and vary the frames so the correct word is not always in the same position (e.g. \"the cup is blue , not red .\nthe cup is\", \"it is green , not white , so the cup is\"). Prediction: negation rises from 1/3 to 2/3 or 3/3 if the copying pattern is\nlearnable at this size, and stays at chance if the limit is the 2-layer architecture rather than the data. Either outcome is informative;\nthe second would motivate a further experiment with 4 layers."
       },
       {
         "rank": 4,
-        "id": "S1-P031",
+        "id": "S1-P053",
         "path": "vault/raw/Custom LLM README.md",
-        "section": "4. The fixed 48-case language evals > 4.2 All 48 cases",
+        "section": "5. Chat interface",
         "lines": [
-          341,
-          346
+          479,
+          486
         ],
-        "score": 8.56,
+        "score": 3.38,
         "matched_terms": [
-          "language",
           "model",
-          "pick",
           "word"
         ],
-        "text": "✅/❌ = scored (predicted choice shown); – = unscorable (a prompt or choice word is unknown). Last column is the Experiment 2\ntrained model's *free* continuation, which can differ from its multiple-choice pick. Full per-case data including choice\nprobabilities and unknown words: [Exp 1 untrained](evidence/starter/language_evals/untrained/eval_results.csv) · [Exp 1 final](evidence/starter/language_evals/final/eval_results.csv) · [Exp 2 untrained](evidence/expanded/language_evals/untrained/eval_results.csv) · [Exp 2 final](evidence/expanded/language_evals/final/eval_results.csv).\n\n| id | category | prompt | answer | E1 untrained | E1 trained | E2 untrained | E2 trained | E2 trained free continuation |\n|---|---|---|---|---|---|---|---|---|"
+        "via": "wiki note: Custom LLM Chat Interface",
+        "text": "**Screenshot** of the session in macOS Terminal, taken by me on 2026-09-22 (the six prompts were typed into the unchanged `chat.py` by [`tools/chat_demo.py`](tools/chat_demo.py); replies are identical to the transcript because each turn's sampling seed is fixed). The bracketed line after *Saved transcript* comes from the small launcher script that opened the window and tried, without permission, to capture it — it is not output of `chat.py`.\n\n**Observed limitations:** turn 5 is the clearest one — every content word in \"my laptop crashed yesterday\" is outside the\nvocabulary, so the model received `<UNK> <UNK> <UNK> yesterday` and produced an empty reply. Turn 6 shows what happens with\npartial coverage: three unknown words plus `today` yield a grammatical-looking but meaningless string. Turns 2–4 show the\ntaught patterns transferring to prompts that are not in the corpus (\"tall\"→\"short\", \"trout\"→\"fish\", \"the cup … green\")."
       }
     ]
   },
@@ -109,14 +126,14 @@
   },
   "model_stats": {
     "purpose": "ask",
-    "wall_seconds": 34.81,
-    "load_seconds": 0.34,
-    "prompt_tokens": 1556,
+    "wall_seconds": 34.47,
+    "load_seconds": 0.59,
+    "prompt_tokens": 1565,
     "output_tokens": 37,
-    "prompt_tokens_per_s": 50.6,
-    "output_tokens_per_s": 10.1
+    "prompt_tokens_per_s": 50.1,
+    "output_tokens_per_s": 14.2
   },
-  "recorded_at": "2026-09-29 10:54:15 PDT",
+  "recorded_at": "2026-09-29 17:26:59 PDT",
   "execution": "local",
   "network": {
     "wifi_power": "On",
@@ -159,5 +176,8 @@
   },
   "expected_passage_rank": [
     3
+  ],
+  "expected_section_rank": [
+    2
   ]
 }

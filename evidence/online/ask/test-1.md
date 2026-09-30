@@ -1,7 +1,7 @@
 # Evidence card: test-1
 
 - **Mode:** ask (standalone, no chat history) · **Execution:** local
-- **Recorded:** 2026-09-29 10:53:40 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
+- **Recorded:** 2026-09-29 17:26:24 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
 - **Model:** gemma4:e2b · 5.1B · Q4_K_M · digest 7fbdbf8f5e45 · Ollama 0.20.7
 - **Model memory:** 7.68 GB loaded, 100% CPU
 
@@ -20,7 +20,7 @@ What was the mean evaluation score of the Pac-Man agent before and after trainin
 Query terms: `mean, evalu, score, pac, man, agent, train`
 
 ### [1] `vault/raw/Pac-Man DQN README.md` › Ms. Pac-Man DQN — Class 3 assignment (lines 3–17)
-score 21.27 · matched: mean, evalu, score, pac, man, agent, train
+score 21.27 · matched: mean, evalu, score, pac, man, agent, train · found via keyword
 
 > **Brian Arevalo Ramos · MBA 290T Fundamentals of Agentic AI · Class 3 / Assignment 2**
 > 
@@ -39,7 +39,7 @@ score 21.27 · matched: mean, evalu, score, pac, man, agent, train
 > Change in mean score: **+116.0**. The five individual scores are in the [results table](#the-five-before-and-after-scores).
 
 ### [2] `vault/raw/Pac-Man DQN README.md` › 4. What actually happened > The five before-and-after scores (lines 125–138)
-score 13.11 · matched: mean, evalu, score, agent, train
+score 13.11 · matched: mean, evalu, score, agent, train · found via keyword
 
 > Same five seeds (101, 202, 303, 404, 505), same 5 % evaluation exploration, same 3,000-decision cap, before and
 > after training. The baseline is the **untrained network**, not a random-action agent.
@@ -57,7 +57,7 @@ score 13.11 · matched: mean, evalu, score, agent, train
 > [`baseline.json`](results/baseline.json). No game hit the 3,000-decision time limit before or after training; every game ended at game over.
 
 ### [3] `vault/raw/Pac-Man DQN README.md` › 3. What I expected before training (lines 87–98)
-score 12.71 · matched: mean, pac, man, agent, train
+score 12.71 · matched: mean, pac, man, agent, train · found via keyword
 
 > - **Untrained baseline around 300–800 points per game** (the setup check's untrained network averaged 492). A random
 >   network still eats pellets because Ms. Pac-Man keeps moving in whatever direction the joystick last said, so "doing
@@ -67,39 +67,35 @@ score 12.71 · matched: mean, pac, man, agent, train
 >   1–2 % of the experience the original DQN paper used, and the replay memory here holds 0.5 % of the paper's. - **A jagged training curve** with a 25-game average that drifts up slowly and can fall back, and **a loss that does not
 >   simply go down** (as the network's value estimates grow, the targets move with them).
 
-### [4] `vault/raw/Pac-Man DQN README.md` › 6. One limitation I observed (lines 222–231)
-score 10.55 · matched: mean, evalu, score, agent, train
+### [4] `vault/raw/Pac-Man DQN README.md` › 5. What the agent sees, does, and is rewarded for (plain language) (lines 202–216)
+score 9.52 · matched: evalu, score, agent, train · found via wiki note: Pac-Man DQN Project
 
-> **The agent did not learn to avoid ghosts, and 500 games with a 5,000-decision memory were not enough to expect it to.**
-> Trained games were no longer than untrained games (571 vs 589 decisions), the seed-101 checkpoint score swung between
-> 190 and 1,100 with no trend, and the 25-game average plateaued after roughly game 25. Two design choices in this
-> classroom DQN explain most of that. First, the replay memory holds about eight games, so every update is drawn from the
-> agent's most recent behavior and older lessons are overwritten (the original DQN paper kept 1,000,000 transitions).
-> Second, losing a life carries no negative reward, so a death only shows up indirectly as future points that never
-> arrive, a weak signal when the future is discounted by 0.99 per decision and every reward is clipped to ±1. A smaller
-> but real caveat on the headline number: five evaluation games is a small sample, and one of the five (seed 404) got
-> *worse* (800 → 640), so the +116 mean improvement is real for this run but should not be read as a precise measure of
-> the agent's skill.
+> - **Observations — four game screens.** Each decision, the agent does not see the colorful Atari frame. It sees the last
+>   four screens shrunk to 84 × 84 grayscale pixels and stacked together. One screen shows *where* everything is; four in a
+>   row show *which way* everything is moving. That is the entire input: no maze map, no ghost coordinates, no score. - **Actions — joystick moves.** The network outputs nine numbers, one per joystick position: no-op, up, right, left,
+>   down, and the four diagonals. Each number is the network's *guess* at how many future points that move leads to. Most of the time the agent takes the highest guess; 10 % of the time during training (5 % during evaluation) it picks
+>   a random move instead. One decision holds the joystick for four game frames.
 
 ## Actual answer
 
 **Status:** answered
 
-The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent it was 608.0 [1], [2]. The change in the mean score was +116.0 [1], [2].
+[1] The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1]. The change in mean score was +116.0 [1].
 
 ## Citation check (done by the harness)
 
-- Cited passages: [1, 2] · valid: [1, 2] · not retrieved: []
+- Cited passages: [1] · valid: [1] · not retrieved: []
 - Figures in the answer: ['116.0', '492.0', '608.0']
 - Figures missing from the cited passages: []
 
 ## Timing
 
-41.49 s total · prompt 1654 tokens at 44.9 tokens/s · answer 60 tokens at 14.0 tokens/s
+50.49 s total · prompt 1565 tokens at 46.6 tokens/s · answer 55 tokens at 14.1 tokens/s
 
 ## Automatic checks
 
-- Expected passage retrieved at rank: [1, 2]
+- Passage containing all expected strings ['492.0', '608.0']: rank [1, 2]
+- Passage from the expected section "The five before-and-after scores": rank [2]
 
 ## My assessment
 

@@ -1,7 +1,7 @@
 # Evidence card: test-4
 
 - **Mode:** ask (standalone, no chat history) · **Execution:** local
-- **Recorded:** 2026-09-29 10:55:28 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
+- **Recorded:** 2026-09-29 17:28:15 PDT · **Network:** connected (Wi-Fi On, default route True, outside host answered True)
 - **Model:** gemma4:e2b · 5.1B · Q4_K_M · digest 7fbdbf8f5e45 · Ollama 0.20.7
 - **Model memory:** 7.68 GB loaded, 100% CPU
 
@@ -20,7 +20,7 @@ Which GPU did I buy to train models at home?
 Query terms: `gpu, buy, train, model, home`
 
 ### [1] `vault/raw/Custom LLM README.md` › 9. Reflection and where I go from here (lines 559–570)
-score 10.91 · matched: gpu, train, model, home
+score 10.91 · matched: gpu, train, model, home · found via keyword
 
 > I plan to keep experimenting with this notebook rather than stop at the submission: the negation experiment in section 7
 > first, then teaching files for the remaining five categories, then a 4-block model to see whether depth changes the negation
@@ -36,7 +36,7 @@ score 10.91 · matched: gpu, train, model, home
 > tables from the saved outputs, and explain the notebook to me step by step. All runs, numbers and evidence are from my own machine.
 
 ### [2] `vault/raw/Custom LLM README.md` › 4. The fixed 48-case language evals > 4.3 Reading the results honestly (lines 399–424)
-score 5.56 · matched: buy, train, model
+score 5.56 · matched: buy, train, model · found via keyword
 
 > * **Extension, coverage: 0/24 → 9/24 scorable.** Experiment 1 could not even attempt the extension cases because words like
 >   `opposite`, `salmon`, `kitten` or `closed` did not exist in its 136-word vocabulary; more training steps could never fix that. My three files made exactly the 9 cases of my three categories scorable and left the other 15 (grammar, reference, sequence,
@@ -45,39 +45,19 @@ score 5.56 · matched: buy, train, model
 >   (3/9 ≈ chance), which is exactly why the untrained baseline is measured. * **Negation 1/3 = chance; this is the failure.** `lang_32` ("ava did not buy tea .
 
 ### [3] `vault/raw/Custom LLM README.md` › 4. The fixed 48-case language evals > 4.4 How eval material stayed out of training (lines 428–433)
-score 4.48 · matched: buy, train
+score 4.48 · matched: buy, train · found via keyword
 
 > `a salmon is a fish` never appears; the corpus has `the salmon is a kind of fish`, `a trout is a fish`. The eval correction pairs red→blue, open→closed and tea→milk never occur, `box` never occurs with red/blue, `door` never with open/closed, and `ava` never buys tea or milk. So the negation evals test transfer of the pattern to new nouns, not recall. 5. Chat transcripts and eval outputs were written only into the run folder, never into `corpus/`. Nothing in this repo retrains on them. 6. Limit of the check: it is an exact contiguous match after normalisation. It cannot detect paraphrases, so rule 4 is a policy I applied by construction, not something the code proves.
 
-### [4] `vault/raw/Pac-Man DQN README.md` › 1. Open and run the notebook (lines 23–48)
-score 4.23 · matched: gpu, train
+### [4] `vault/raw/Custom LLM README.md` › 9. Reflection and where I go from here (lines 548–557)
+score 3.06 · matched: train, model · found via wiki note: Next Steps And Hardware
 
-> **Google Colab (easiest):** click the badge above, choose *Runtime → Change runtime type → T4 GPU* if available,
-> edit the three values in section 1, then *Runtime → Run all*. The setup cell installs the packages.
-> 
-> **Local Jupyter / VS Code:**
-> 
-> ```bash
-> git clone https://github.com/BuildingBrian/pacman-dqn.git
-> cd pacman-dqn
-> python3.12 -m venv .venv && source .venv/bin/activate     # Python 3.11–3.13
-> pip install -r requirements.txt
-> jupyter lab pacman_dqn.ipynb                              # then Run All
-> ```
-> 
-> **Exactly how this submission was produced (headless, no browser):**
-> 
-> ```bash
-> source .venv/bin/activate
-> python -m ipykernel install --user --name pacman-dqn
-> python tools/run_headless.py --deadline 20:30            # runs every cell in order, saves outputs into the notebook
-> python tools/collect_results.py pacman_runs/<run folder>  # copies the evidence into results/
-> ```
-> 
-> `tools/run_headless.py` executes the notebook top to bottom with `nbclient` and writes the outputs back into
-> `pacman_dqn.ipynb`. The optional `--deadline` sends the kernel **one** interrupt at that wall-clock time if
-> training is still running; the notebook catches it, saves the agent as an *interrupted* run, and continues
-> to evaluation. The deadline was not reached; training completed on its own.
+> I was skeptical going in. Even once I understood the mechanics, I expected the "learning" to be memorisation: the network
+> would store the template sentences and play them back, and any eval it passed would be a sentence it had already seen. Three results changed my mind. The 16 reserved prompts were withheld from training and the trained model still answered all
+> 16. The 8 rephrasings it had never seen went from 4 to 7 correct once the corpus had more sentence shapes. And it answered
+> "the opposite of hot is" with *cold* although that sentence never appears anywhere in the corpus; it only ever saw "hot is the
+> opposite of cold", "the soup is hot , not cold" and "the opposite of cold is hot". It combined a frame learned from other
+> pairs with an association learned from other sentences.
 
 ## Actual answer
 
@@ -99,7 +79,7 @@ INSUFFICIENT EVIDENCE
 
 ## Timing
 
-31.95 s total · prompt 1552 tokens at 49.7 tokens/s · answer 6 tokens at 14.9 tokens/s
+25.28 s total · prompt 1386 tokens at 56.3 tokens/s · answer 6 tokens at 17.3 tokens/s
 
 ## Automatic checks
 
