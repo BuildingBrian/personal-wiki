@@ -20,11 +20,11 @@ I observed that the agent did not learn to avoid ghosts, and 500 games with a 5,
 
 - The agent did not learn to avoid ghosts.
 - 500 games with a 5,000-decision memory were not enough to expect learning.
-- Trained games were no longer than untrained games (571 vs 589 decisions).
-- The seed-101 checkpoint score swung between 190 and 1,100 with no trend.
-- The 25-game average plateaued after roughly game 25.
 - The replay memory holds about eight games, so every update is drawn from the agent's most recent behavior and older lessons are overwritten.
 - Losing a life carries no negative reward, so a death only shows up indirectly as future points that never arrive.
+- A smaller caveat is that five evaluation games is a small sample.
+- One of the five evaluation games (seed 404) got worse (800 → 640).
+- The +116 mean improvement is real for this run but should not be read as a precise measure of the agent's skill.
 
 ## Related notes
 

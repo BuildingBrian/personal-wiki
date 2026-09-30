@@ -20,14 +20,14 @@ read from those files by [`scripts/build_readme.py`](scripts/build_readme.py).
 ## Results at a glance
 
 
-> **Offline run pending.** The results below are from the local model with the laptop still connected. The offline demonstration is run with `Run offline demo.command` after turning Wi-Fi off.
+All four questions below were run **with Wi-Fi off**, after restarting the CLI ([full offline session](evidence/offline/session.txt)).
 
 | Test | Question | Kind | Result | Passage with expected strings, rank | Expected section, rank | Passages cited | Time | Evidence |
 |---|---|---|---|---|---|---|---|---|
-| test-1 | What was the mean evaluation score of the Pac-Man agent before and after training? | answerable | answered | [1, 2] | [2] | [1] | 50.49 s | [card](evidence/online/ask/test-1.md) |
-| test-2 | Which skill did my tiny language model fail to pick up, and what wrong word did it choose? | answerable | answered | [3] | [2] | [3] | 34.47 s | [card](evidence/online/ask/test-2.md) |
-| test-3 | How does the networking tracker stop one user from reading another user's contacts? | answerable | answered | — | [3, 4] | [4] | 49.61 s | [card](evidence/online/ask/test-3.md) |
-| test-4 | Which GPU did I buy to train models at home? | unsupported | insufficient evidence | — | — | — | 25.28 s | [card](evidence/online/ask/test-4.md) |
+| test-1 | What was the mean evaluation score of the Pac-Man agent before and after training? | answerable | answered | [1, 2] | [2] | [1] | 42.52 s | [card](evidence/offline/ask/test-1.md) |
+| test-2 | Which skill did my tiny language model fail to pick up, and what wrong word did it choose? | answerable | answered | [3] | [2] | [3] | 35.03 s | [card](evidence/offline/ask/test-2.md) |
+| test-3 | How does the networking tracker stop one user from reading another user's contacts? | answerable | answered | — | [3, 4] | [1, 4] | 39.05 s | [card](evidence/offline/ask/test-3.md) |
+| test-4 | Which GPU did I buy to train models at home? | unsupported | insufficient evidence | — | — | — | 27.18 s | [card](evidence/offline/ask/test-4.md) |
 
 Three answerable questions were answered from retrieved passages with checked citations, and the question my
 sources cannot answer got an explicit refusal. It did not work the first time: [section 8](#8-what-failed-first-and-what-i-changed)
@@ -93,9 +93,9 @@ Then, online or offline:
 |---|---|
 | Computer | 2019 MacBook Pro 16-inch, macOS 26.6.2, x86_64 |
 | CPU | Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz, 6 cores |
-| RAM | 32 GB total, 10.3 GB available when measured |
+| RAM | 32 GB total, 13.7 GB available when measured |
 | GPU | Intel UHD Graphics 630, 1536 MB, AMD Radeon Pro 5300M, 4 GB (dedicated VRAM 4 GB; **not used**: the runtime reports 100% CPU) |
-| Free disk | 21.2 GB |
+| Free disk | 19.4 GB |
 | Model | `gemma4:e2b` · family gemma4 · 5.1B parameters · gguf |
 | Quantization | Q4_K_M |
 | Runtime | Ollama 0.20.7, HTTP API on `127.0.0.1:11434` |
@@ -117,11 +117,11 @@ effort on keeping prompts short.
 | Measurement | Value | Source |
 |---|---|---|
 | Model memory while loaded | 7.68 GB, 100% CPU | `ollama ps` via [`model_card.json`](evidence/model_card.json) |
-| One `ask` answer | 25.28 to 50.49 s (prompt 1386 to 1647 tokens) | [evidence/online/ask/](evidence/online/ask/) |
+| One `ask` answer | 27.18 to 42.52 s (prompt 1386 to 1647 tokens) | [evidence/offline/ask/](evidence/offline/ask/) |
 | Drafting the wiki, 22 notes | median 39.23 s per note; 14.2 min of model time for 21 notes | [pass 2 log](evidence/ingest/pass-2-curated-plan.log), [report](evidence/ingest/) |
 | Text passed to Gemma for one note | 211 to 771 words (464 to 2250 tokens) | same report |
 | Reading speed / writing speed | 46.1 / 14.4 tokens per second | same report |
-| Offline re-ingestion of one source | 3.3 min, 5 notes drafted, 0 duplicates | [offline ingest report](evidence/ingest/) |
+| Offline re-ingestion of one source | 3.5 min, 5 notes drafted, 0 duplicates | [offline ingest report](evidence/ingest/) |
 | Search index | 121 passages from 3 sources, rebuilt in under a second | [`data/index/passages.json`](data/index/passages.json) |
 
 One drafting call is excluded from the timing: it took 1317 s because the laptop went to sleep with its lid closed in the middle of it. The note it produced is normal.
@@ -290,10 +290,10 @@ The test file lives outside the vault and is never indexed.
   2. `vault/raw/Pac-Man DQN README.md` › 4. What actually happened > The five before-and-after scores (lines 125–138, score 13.11)
   3. `vault/raw/Pac-Man DQN README.md` › 3. What I expected before training (lines 87–98, score 12.71)
   4. `vault/raw/Pac-Man DQN README.md` › 5. What the agent sees, does, and is rewarded for (plain language) (lines 202–216, score 9.52, found via wiki note: Pac-Man DQN Project)
-- **Actual answer (answered):** [1] The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1]. The change in mean score was +116.0 [1].
+- **Actual answer (answered):** The mean score over the same five evaluation games for the untrained network was 492.0, and for the trained agent was 608.0 [1]. The change in mean score was +116.0 [1].
 - **Citation check by the harness:** cited [1], all retrieved; figures in the answer ['116.0', '492.0', '608.0']; figures missing from the cited passages none.
-- **My assessment after opening the cited passages:** Correct. Both cited passages contain 492.0 and 608.0: passage 1 is the summary at the top of the write-up and passage 2 is the score table itself. The harness found every figure of the answer inside the cited passages. The model's raw reply also copied the table out of the passage; the harness shows only the prose and keeps the raw reply in the card.
-- **Full record:** [evidence/online/ask/test-1.md](evidence/online/ask/test-1.md)
+- **My assessment after opening the cited passages:** Correct. The cited passage [1], the summary at the top of the write-up, contains 492.0, 608.0 and +116.0, and the harness found every figure of the answer in it. The score table itself (passage 2) was retrieved too but not cited this time. Routing replaced the fourth passage, which changed the prompt, and the model now cites one passage where run 3 cited two; both are correct. The raw reply opened with a bare "[1]". The harness now strips a citation that opens the answer and keeps the raw reply in the card.
+- **Full record:** [evidence/offline/ask/test-1.md](evidence/offline/ask/test-1.md)
 
 ### test-2: Which skill did my tiny language model fail to pick up, and what wrong word did it choose?
 
@@ -307,8 +307,8 @@ The test file lives outside the vault and is never indexed.
   4. `vault/raw/Custom LLM README.md` › 5. Chat interface (lines 479–486, score 3.38, found via wiki note: Custom LLM Chat Interface)
 - **Actual answer (answered):** Negation transfer failed [3]. The model picked the negated word, such as "tea", instead of the corrected one, or an unrelated color like "green" [3].
 - **Citation check by the harness:** cited [3], all retrieved; figures in the answer none; figures missing from the cited passages none.
-- **My assessment after opening the cited passages:** Correct, and this is the test that failed first. The cited passage says "Negation transfer failed (1/3, chance)" and that the model "picked the negated word (tea) or an unrelated colour (green)". The passage was ranked third, behind two that merely share the words "language" and "model" with the question. Keyword retrieval matched the question's wording, not its meaning, which is what I predicted.
-- **Full record:** [evidence/online/ask/test-2.md](evidence/online/ask/test-2.md)
+- **My assessment after opening the cited passages:** Correct, and this is the test that failed first. The cited passage says "Negation transfer failed (1/3, chance)" and that the model "picked the negated word (tea) or an unrelated colour (green)". It was ranked third, behind two that merely share the words "language" and "model" with the question. Keyword retrieval matched the question's wording, not its meaning, which is what I predicted. Routing added a second "Chat interface" passage at rank 4, which the answer ignores: for this question the router picked the wrong note (section 11).
+- **Full record:** [evidence/offline/ask/test-2.md](evidence/offline/ask/test-2.md)
 
 ### test-3: How does the networking tracker stop one user from reading another user's contacts?
 
@@ -320,10 +320,10 @@ The test file lives outside the vault and is never indexed.
   2. `vault/raw/Networking Tracker README.md` › Tests > Test output (lines 297–326, score 15.04)
   3. `vault/raw/Networking Tracker README.md` › Authentication and RLS ownership (lines 249–265, score 10.85, found via wiki note: Row Level Security)
   4. `vault/raw/Networking Tracker README.md` › Authentication and RLS ownership (lines 224–247, score 7.69, found via wiki note: Row Level Security)
-- **Actual answer (answered):** One user cannot reach another user's contacts because of Row Level Security (RLS) policies [4]. The ownership rule is that a row is reachable only when `auth.user_id() = user_id` [4]. This is enforced by policies such as `contacts_select_own` which uses the condition `auth.user_id() = user_id` for selecting contacts [4].
-- **Citation check by the harness:** cited [4], all retrieved; figures in the answer none; figures missing from the cited passages none.
-- **My assessment after opening the cited passages:** Correct, but less complete than the answer I expected. Every claim is supported: the introduction says ownership is enforced by Row Level Security inside Postgres rather than by application code, and the two test-output passages show user B failing to read user A's contact. The section I expected, "Authentication and RLS ownership", which states the rule auth.user_id() = user_id, was not in the top four. Retrieval found evidence that the privacy works, not the passage that explains how.
-- **Full record:** [evidence/online/ask/test-3.md](evidence/online/ask/test-3.md)
+- **Actual answer (answered):** The networking tracker uses Row Level Security (RLS) policies to prevent one user from reading another user's contacts [1]. The ownership rule is that a row is reachable only when `auth.user_id() = user_id` [4]. This is enforced through policies such as `contacts_select_own` which uses the condition `auth.user_id() = user_id` for selecting contacts [4].
+- **Citation check by the harness:** cited [1, 4], all retrieved; figures in the answer none; figures missing from the cited passages none.
+- **My assessment after opening the cited passages:** Correct, and now complete on the mechanism. In runs 1 to 3 the answer only said that Row Level Security keeps contacts private. The section that explains how ranked 6th and never reached the model. Now both passages of "Authentication and RLS ownership" are retrieved, at ranks 3 and 4, found via the note "Row Level Security". I opened passage 4: it states "a row is reachable only when `auth.user_id() = user_id`" word for word and contains the `contacts_select_own` policy the answer quotes. The first sentence cites passage 1, the production test run, whose test names read "RLS: one user cannot reach another user's contacts". That supports the claim, though the word "policies" comes from passage 4. Compared with my expected answer, one point is missing: that the database, not application code, enforces the rule. Passage 4 says so ("the database — not the application — decides who owns a row"), but the answer does not repeat it. The automatic string check still reports NOT RETRIEVED, because that section writes "RLS" and never "Row Level Security" (section 8).
+- **Full record:** [evidence/offline/ask/test-3.md](evidence/offline/ask/test-3.md)
 
 ### test-4: Which GPU did I buy to train models at home?
 
@@ -337,8 +337,8 @@ The test file lives outside the vault and is never indexed.
   4. `vault/raw/Custom LLM README.md` › 9. Reflection and where I go from here (lines 548–557, score 3.06, found via wiki note: Next Steps And Hardware)
 - **Actual answer (insufficient evidence):** Insufficient evidence: the wiki sources do not contain this information.
 - **Why it refused:** the model found no answer in the passages.
-- **My assessment after opening the cited passages:** Correct refusal, and the hard kind. The tempting passage was retrieved at rank 1: it says I am "considering hardware for training models at home". The model did not turn considering into buying. Rule 6 of the research rules was written for exactly this case.
-- **Full record:** [evidence/online/ask/test-4.md](evidence/online/ask/test-4.md)
+- **My assessment after opening the cited passages:** Correct refusal, and the hard kind. The tempting passage was retrieved at rank 1: it says I am "considering hardware for training models at home". Routing added a second passage from the same reflection section at rank 4, via the note "Next Steps And Hardware", so the model saw more of the temptation than before. It still did not turn considering into buying. Rule 6 of the research rules was written for exactly this case.
+- **Full record:** [evidence/offline/ask/test-4.md](evidence/offline/ask/test-4.md)
 
 ## 8. What failed first, and what I changed
 
@@ -401,22 +401,55 @@ online and then offline (run 4). The other expected passages are still retrieved
 
 | Check | I typed | Harness decision | Ledger replied |
 |---|---|---|---|
-| capabilities | what can we do? | skipped: question about the assistant itself | We can look at what you're working on. We have the nanoGPT language model, the Ms. Pac-Man agent, and the networking tracker app. What's the next thing you want to tackle? We could brainstorm, plan an experiment, or draft something. |
-| capabilities | what can you help me with? | skipped: question about the assistant itself | I can help you with brainstorming ideas, planning next experiments, drafting text, and looking up information from the project wiki. What task do you have in mind right now? |
-| draft from notes | Draft a short plan for my next Pac-Man experiment. | looked up 3 passages: the message names a project (pac man) | Suggestion: We could try adjusting the hyperparameters for the Ms. Pac-Man agent. Here is a short plan: 1. **Increase Training Games:** Run the training for more than 500 games to see if the agent can achieve better mastery. 2. **Adjust Learning Rate:** Experiment with a slightly different learning rate, perhaps moving away fro… |
-| follow-up | make that shorter | skipped: follow-up on the conversation | Here is a shorter plan for the Pac-Man experiment: 1. Train for more games (over 500). 2. Adjust the learning rate (try something other than $0.0001$). 3. Analyze performance against the $600–900$ point range. |
+| capabilities | what can we do? | skipped: question about the assistant itself | We can look at what you're working on. We have the nanoGPT language model, the Ms. Pac-Man agent, and the networking tracker app. What's the next step you want to tackle? |
+| capabilities | what can you help me with? | skipped: question about the assistant itself | I can help you brainstorm ideas, plan experiments, draft text, and look up information from the project wiki. Tell me what you want to work on next. |
+| draft from notes | Draft a short plan for my next Pac-Man experiment. | looked up 3 passages: the message names a project (pac man) | Suggestion: We could try adjusting the hyperparameters for the Ms. Pac-Man agent. Here is a draft plan: 1. **Explore Hyperparameters:** Test different values for exploration rate, training games, and the learning rate to see if we can achieve a smoother or higher score. 2. **Focus on Exploration:** Since the training curve was … |
+| follow-up | make that shorter | skipped: follow-up on the conversation | Okay, shorter. Plan: Adjust hyperparameters (exploration rate, learning rate) for the Pac-Man agent. Focus on smoothing the training curve. |
 
-Full transcript: [evidence/online/mode-checks/chat-capabilities-and-followup.md](evidence/online/mode-checks/chat-capabilities-and-followup.md)
+Full transcript: [evidence/offline/mode-checks/chat-capabilities-and-followup.md](evidence/offline/mode-checks/chat-capabilities-and-followup.md)
 
-**Search** returns original passages with paths and line numbers and makes no model call: [evidence/online/mode-checks/search-check.txt](evidence/online/mode-checks/search-check.txt).
+**Search** returns original passages with paths and line numbers and makes no model call: [evidence/offline/mode-checks/search-check.txt](evidence/offline/mode-checks/search-check.txt).
 
-**A claim made only in chat is not evidence.** In chat I said I had decided to name my next project Falcon ([chat side](evidence/online/mode-checks/separation-chat-side.md)). Then, in a fresh `ask`: "What name did I decide on for my next project?" → **insufficient evidence** ([ask side](evidence/online/mode-checks/separation-ask-side.md)). Ask never sees chat history, and chat messages are never written into the vault or the index.
+**A claim made only in chat is not evidence.** In chat I said I had decided to name my next project Falcon ([chat side](evidence/offline/mode-checks/separation-chat-side.md)). Then, in a fresh `ask`: "What name did I decide on for my next project?" → **insufficient evidence** ([ask side](evidence/offline/mode-checks/separation-ask-side.md)). Ask never sees chat history, and chat messages are never written into the vault or the index.
 
-**What the checks show.** Both capability questions were answered from the persona with no lookup, no citation and no refusal. The plan request named a project, so the harness looked up three passages, and the reply labelled itself a suggestion and cited a passage. "make that shorter" used the conversation and made no lookup. **One weakness is visible in the transcript:** the draft plan is generic. It proposes adjusting exploration or the number of games, while my own write-up proposes a specific next experiment, a ten-times-larger replay memory. That section was not among the three passages retrieved, because it never uses the word "Pac-Man". Chat also does not enforce a citation on every fact the way ask does; it flags a reply that used passages but cites none.
+**What the checks show.** Both capability questions were answered from the persona, with no lookup, no citation and no refusal. The plan request named a project, so the harness looked up three passages, and the reply labelled itself a suggestion and cited passage 3. "make that shorter" used the conversation and made no lookup. **Two weaknesses are visible in the transcript.** The plan cites my *prediction* as if it were a result: "Since the training curve was jagged [3]" points at "What I expected before training", which I wrote before the run started. Its other citation, that the setup is a small fraction of the original paper's experience, is supported by the same passage. And the plan is generic. It proposes tuning exploration, learning rate and training length, while my own write-up proposes a specific next experiment, a ten-times-larger replay memory. That section was not among the three passages retrieved, because it never uses the word "Pac-Man", and chat does not yet use the note routing that ask and search now use. Chat also does not enforce a citation on every fact the way ask does; it only flags a reply that used passages but cites none.
 
 ## 10. Offline demonstration
 
-Not yet run. `Run offline demo.command` performs it: it refuses to start while the Mac is connected, then runs help, status, a forced re-ingestion of one source, search, the four ask tests and the mode checks, and saves everything under `evidence/offline/`.
+Run with `Run offline demo.command` after turning Wi-Fi off. The script refuses to start while the Mac is connected. Each `./wiki` command is a new process, so the CLI was restarted after the network was gone. Recorded network state during the tests: Wi-Fi Off, default route False, outside host answered False.
+
+| Step | Command | Evidence |
+|---|---|---|
+| Network state | `networksetup`, `route`, `ping` | [session.txt](evidence/offline/session.txt) |
+| Help and status | `./wiki help`, `./wiki status` | same file |
+| Ingestion with local Gemma | `./wiki ingest "vault/raw/Pac-Man DQN README.md" --force` | same file, and the [offline ingest report](evidence/ingest/) |
+| Search | `./wiki search "row level security"` | same file |
+| Four ask tests | `./wiki test` | [evidence/offline/ask/](evidence/offline/ask/) |
+| Chat, search and separation checks | `./wiki test` | [evidence/offline/mode-checks/](evidence/offline/mode-checks/) |
+
+An earlier attempt at 16:33 was stopped because Wi-Fi came back on during ingestion. Its partial output is kept in [evidence/runs/offline-attempt-1-wifi-came-back/](evidence/runs/offline-attempt-1-wifi-came-back/) and is not used as offline evidence. The run above was repeated from the start with Wi-Fi off throughout.
+
+![Offline run](evidence/offline/offline-run-1.png)
+
+![Offline run](evidence/offline/offline-run-10.png)
+
+![Offline run](evidence/offline/offline-run-11.png)
+
+![Offline run](evidence/offline/offline-run-2.png)
+
+![Offline run](evidence/offline/offline-run-3.png)
+
+![Offline run](evidence/offline/offline-run-4.png)
+
+![Offline run](evidence/offline/offline-run-5.png)
+
+![Offline run](evidence/offline/offline-run-6.png)
+
+![Offline run](evidence/offline/offline-run-7.png)
+
+![Offline run](evidence/offline/offline-run-8.png)
+
+![Offline run](evidence/offline/offline-run-9.png)
 
 ## 11. Reflection: one limitation and one improvement
 

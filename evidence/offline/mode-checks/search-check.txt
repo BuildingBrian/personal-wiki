@@ -1,0 +1,68 @@
+model: gemma4:e2b (Q4_K_M) on Ollama 0.20.7 · execution: local · network: OFFLINE (Wi-Fi off, no network route)
+
+SEARCH  "row level security"   (keyword index over original sources; no model call, no generated answer)
+query terms: row, level, security
+best-matching wiki note: Row Level Security  (its source sections can join the keyword hits)
+
+[1] vault/raw/Networking Tracker README.md  ›  Technology stack and why  (lines 68–77)
+    passage S2-P005 · score 10.02 · matched: row, level, security · found via keyword
+    | | Layer | Choice | Why |
+    | | --- | --- | --- |
+    | | Framework | **Next.js 16 (App Router) + TypeScript** | Keeps the frontend and backend in one repo while staying genuinely separate — React client components in the browser, Route Handlers on the server. Also the deployment target Vercel is built around. |
+    | | Styling | **Tailwind CSS v4 + shadcn/ui** | shadcn/ui is a real component system (Base UI primitives with consistent design tokens) rather than hand-rolled CSS, so the UI stays accessible and consistent across breakpoints with little custom code. |
+    | | Database | **Neon Postgres** | Serverless Postgres that supports Row Level Security — which is where this app's security actually lives. |
+    | | Auth | **Neon Managed Better Auth** | Issues a JWT whose subject Postgres reads as `auth.user_id()`. That is what makes database-level ownership possible without the app ever passing a user ID around. |
+
+[2] vault/raw/Networking Tracker README.md  ›  Networking Tracker  (lines 3–7)
+    passage S2-P001 · score 8.73 · matched: row, level, security · found via keyword
+    | A private, per-user networking tracker for the people you want to stay connected with at Berkeley. Sign up, add the people you meet — name, company, role, where you met, notes, and a priority — then sort, filter, edit, and delete them. Every contact belongs to exactly one account, and that ownership is enforced by **Row Level Security inside Postgres** rather than by application code, so the data stays private even against a request made directly to the public Data API with a valid login.
+    | 
+    | **Live app:** **https://networking-tracker-gules.vercel.app**
+    | 
+    | **Repository:** https://github.com/BuildingBrian/networking-tracker
+
+[3] vault/raw/Networking Tracker README.md  ›  Architecture  (lines 83–102)
+    passage S2-P007 · score 7.23 · matched: row, level, security · found via keyword
+    | ```
+    | Browser (React client components — src/components/*)
+    |   │
+    |   │  fetch('/api/contacts')              never talks to Postgres or the Data API
+    |   ▼
+    | Next.js Route Handlers (src/app/api/contacts/…)          ← the backend
+    |   │  1. getSessionUser()   → 401 if not signed in
+    |   │  2. Zod validation     → 400 with per-field messages
+    |   │  3. exchange the session cookie for the user's JWT
+    |   │  4. Data API call carrying THAT JWT
+    |   ▼
+    | Neon Data API (PostgREST)
+    |   │
+    |   ▼
+    | Neon Postgres — Row Level Security decides which rows the query may touch
+    | ```
+    | 
+    | **Frontend** — `src/components/*` are client components. They hold UI state (filters, sort, dialogs) and talk only to this app's own `/api` routes. They never see a database credential.
+    | 
+    | **Backend** — `src/app/api/contacts/route.ts` (list, create) and `src/app/api/contacts/[id]/route.ts` (update, delete) are the server. Each handler authenticates the session, validates the body against a Zod schema, and only then issues a Data API query. `src/app/api/auth/[...path]/route.ts` proxies Neon Auth so the session lands in an **httpOnly, signed cookie** rather than browser-readable storage. `src/middleware.ts` redirects unauthenticated visits to `/contacts` to the sign-in page.
+
+[4] vault/raw/Custom LLM README.md  ›  4. The fixed 48-case language evals > 4.2 All 48 cases  (lines 348–395)
+    passage S1-P032 · score 5.04 · matched: security · found via keyword
+    | | lang_01 | domain_context | the report about the customer explains the | service | ❌ juice | ✅ service | ❌ code | ✅ service | support in detail . |
+    | | lang_02 | domain_context | the report about the merchandise explains the | quality | ❌ lesson | ✅ quality | ✅ quality | ✅ quality | return in detail . |
+    | | lang_03 | domain_context | the report about the mortgage explains the | payment | ❌ harvest | ✅ payment | ✅ payment | ✅ payment | return in detail . |
+    | | lang_04 | domain_context | the report about the mango explains the | juice | ✅ juice | ✅ juice | ❌ code | ✅ juice | taste in detail . |
+    | | lang_05 | domain_context | the report about the bicycle explains the | journey | ✅ journey | ✅ journey | ❌ price | ✅ journey | traffic in detail . |
+    | | lang_06 | domain_context | the report about the application explains the | security | ❌ student | ✅ security | ❌ payment | ✅ security | security in detail . |
+
+[5] vault/raw/Custom LLM README.md  ›  3. Evidence from inside the network > 3.6 Attention rows  (lines 265–274)
+    passage S1-P024 · score 3.66 · matched: row · found via keyword
+    | For the three-token prefix `<BOS> the customer`, the notebook saves one head's attention weights
+    | ([inspection.json → attention_rows](evidence/starter/inspection.json)): each row is a position, each column an earlier position.
+    | 
+    | ```
+    | Experiment 1: [[1.0, 0.0, 0.0], [0.606, 0.394, 0.0], [0.485, 0.423, 0.092]]
+    | Experiment 2: [[1.0, 0.0, 0.0], [0.154, 0.846, 0.0], [0.449, 0.28, 0.271]]
+    | ```
+    | 
+    | Row 1 can only look at itself (1.0); row 2 splits its attention between `<BOS>` and `the`; row 3 (`customer`) spreads
+    | over all three. The zeros above the diagonal are the causal mask: a position never sees tokens after it, which is what lets
+    | the model generate left to right.

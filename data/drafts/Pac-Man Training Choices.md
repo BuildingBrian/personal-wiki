@@ -14,18 +14,18 @@ reviewed: false
 
 # Pac-Man Training Choices
 
-I made three specific choices for my Pac-Man training: Exploration, Episodes, and Learning rate. I chose these values based on the constraints of the notebook and the limited replay memory.
+I made three specific choices for my Pac-Man training parameters. I chose an exploration rate of 0.10, 500 episodes, and a learning rate of 0.0001. These choices were based on my assessment of the limited replay memory and the need to ensure the training fit within a deadline.
 
 ## Key details
 
-- For Exploration, I chose a value of 0.10, which is 10 % of training moves being random.
-- For Episodes, I chose 500, which is five times the starting value of 100.
-- For the Learning rate, I chose 0.0001.
-- I chose 500 episodes because the notebook warned that useful Atari learning "may require much longer runs".
-- I chose a smaller learning rate because with a tiny replay memory, larger steps risk divergence.
-- I expected an untrained baseline around 300–800 points per game.
-- I expected modest, noisy improvement rather than mastery, expecting the trained mean to land around 600–900.
+- For Exploration, I chose a value of 0.10, while the notebook default was 0.20.
+- I set the number of Episodes to 500, compared to the default of 100.
+- I selected a Learning rate of 0.0001, which is the reference point for Adam in DQN implementations.
+- I wanted most of the replay memory to be the agent's own policy rather than coin flips due to the limited memory.
+- I expected the untrained baseline to be around 300–800 points per game.
+- I anticipated modest, noisy improvement rather than mastery, expecting the trained mean to be around 600–900.
 - I expected a jagged training curve and a loss that does not simply go down.
+- I anticipated a real chance of no improvement or regression on the five fixed evaluation games.
 
 ## Related notes
 

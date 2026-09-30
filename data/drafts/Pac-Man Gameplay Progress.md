@@ -13,7 +13,7 @@ reviewed: false
 
 # Pac-Man Gameplay Progress
 
-I track my gameplay progress by training the model over successive sets of games. The scores show a fluctuating pattern rather than a steady climb.
+I track my gameplay progress by training the model over successive sets of games. The results show that the score under a specific seed changes significantly as I train.
 
 ## Key details
 

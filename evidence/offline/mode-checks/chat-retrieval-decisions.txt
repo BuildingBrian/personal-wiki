@@ -1,0 +1,19 @@
+ok  skip   | what can we do?                                                    | skipped: question about the assistant itself
+ok  skip   | what can you help me with?                                         | skipped: question about the assistant itself
+ok  skip   | hello                                                              | skipped: question about the assistant itself
+ok  skip   | thanks, that helps                                                 | skipped: follow-up on the conversation
+ok  skip   | make that shorter                                                  | skipped: follow-up on the conversation
+ok  skip   | For the record, I have decided to name my next project Falcon.     | skipped: weak match with the sources (best score 8.09)
+ok  skip   | help me brainstorm names for a robotics club                       | skipped: weak match with the sources (best score 6.79)
+ok  skip   | how should I structure my week?                                    | skipped: weak match with the sources (best score 6.14)
+ok  skip   | I feel behind on everything today                                  | skipped: weak match with the sources (best score 6.45)
+ok  skip   | give me three ideas for a weekend project                          | skipped: weak match with the sources (best score 5.42)
+ok  skip   | what should I cook tonight?                                        | skipped: no wiki passage shares a word with this message
+ok  LOOKUP | Draft a short plan for my next Pac-Man experiment.                 | looked up 3 passages: the message names a project (pac man)
+ok  LOOKUP | What did the Pac-Man agent score after training?                   | looked up 3 passages: the message names a project (pac man)
+ok  LOOKUP | Why did negation fail in my language model?                        | looked up 3 passages: the message names a project (language model)
+ok  LOOKUP | Write a two-line LinkedIn post about my networking tracker.        | looked up 3 passages: the message names a project (tracker)
+ok  LOOKUP | what is row level security and how did I use it?                   | looked up 3 passages: the message asks about my records
+ok  LOOKUP | Can you remind me what hardware I was considering?                 | looked up 3 passages: the message asks about my records
+
+misjudged: 0 of 17

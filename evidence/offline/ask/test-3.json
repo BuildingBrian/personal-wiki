@@ -1,0 +1,184 @@
+{
+  "mode": "ask",
+  "question": "How does the networking tracker stop one user from reading another user's contacts?",
+  "uses_chat_history": false,
+  "retrieval": {
+    "method": "BM25 keyword index over vault/raw, plus the source sections of the best-matching wiki note",
+    "top_k": 4,
+    "query_terms": [
+      "network",
+      "tracker",
+      "stop",
+      "user",
+      "read",
+      "another",
+      "contact"
+    ],
+    "terms_not_in_index": [],
+    "routed_note": "Row Level Security",
+    "note_scores": [
+      [
+        13.15,
+        "Row Level Security"
+      ],
+      [
+        9.66,
+        "Networking Tracker Architecture"
+      ],
+      [
+        9.17,
+        "Networking Tracker Overview"
+      ]
+    ],
+    "passages": [
+      {
+        "rank": 1,
+        "id": "S2-P028",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Production verification",
+        "lines": [
+          376,
+          388
+        ],
+        "score": 17.57,
+        "matched_terms": [
+          "network",
+          "tracker",
+          "user",
+          "read",
+          "another",
+          "contact"
+        ],
+        "via": "keyword",
+        "text": "**Two-account privacy test against production — `TEST_APP_URL=https://networking-tracker-gules.vercel.app npx vitest run tests/rls.test.ts`** (accounts created through the live app's auth proxy; every assertion sent straight to the public Data API with each user's JWT):\n\n```\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A can read their own contact 1354ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot SELECT User A's contact, even by its exact ID 374ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B does not see User A's contact in an unfiltered list 380ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot UPDATE User A's contact 749ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot DELETE User A's contact 740ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot INSERT a row owned by User A 761ms\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A cannot hand their own row to User B via UPDATE 1884ms\n Test Files  1 passed (1)\n      Tests  7 passed (7)\n```"
+      },
+      {
+        "rank": 2,
+        "id": "S2-P023",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Tests > Test output",
+        "lines": [
+          297,
+          326
+        ],
+        "score": 15.04,
+        "matched_terms": [
+          "user",
+          "read",
+          "another",
+          "contact"
+        ],
+        "via": "keyword",
+        "text": "```\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A can read their own contact\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot SELECT User A's contact, even by its exact ID\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B does not see User A's contact in an unfiltered list\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot UPDATE User A's contact\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot DELETE User A's contact\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User B cannot INSERT a row owned by User A\n ✓ tests/rls.test.ts > RLS: one user cannot reach another user's contacts > User A cannot hand their own row to User B via UPDATE\n```"
+      },
+      {
+        "rank": 3,
+        "id": "S2-P017",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Authentication and RLS ownership",
+        "lines": [
+          249,
+          265
+        ],
+        "score": 10.85,
+        "matched_terms": [
+          "user",
+          "read",
+          "another",
+          "contact"
+        ],
+        "via": "wiki note: Row Level Security",
+        "text": "**Why `UPDATE` needs both clauses.** `USING` decides which rows a statement may *target*; `WITH CHECK` decides what those rows may look like *afterwards*. With `USING` alone, a user could edit a row they own and reassign `user_id` to someone else on the way out — handing their row to another account. `WITH CHECK` rejects any result that would no longer belong to the caller. The `BEFORE UPDATE` trigger additionally pins `user_id` to its old value, so even a future policy mistake could not silently transfer ownership.\n\nThe `anonymous` role is granted nothing on this table, so an unauthenticated request to the public Data API cannot read a single row.\n\n`npm run db:push` prints what is actually in the database. Against the live project it reports:\n\n```\nRLS enabled: true   forced: true\n\n4 policies on public.contacts:\n  DELETE contacts_delete_own   USING (auth.user_id() = user_id)\n  INSERT contacts_insert_own   WITH CHECK (auth.user_id() = user_id)\n  SELECT contacts_select_own   USING (auth.user_id() = user_id)\n  UPDATE contacts_update_own   USING (auth.user_id() = user_id)   WITH CHECK (auth.user_id() = user_id)\n\nuser_id   text   NOT NULL   default auth.user_id()\n```"
+      },
+      {
+        "rank": 4,
+        "id": "S2-P016",
+        "path": "vault/raw/Networking Tracker README.md",
+        "section": "Authentication and RLS ownership",
+        "lines": [
+          224,
+          247
+        ],
+        "score": 7.69,
+        "matched_terms": [
+          "user",
+          "contact"
+        ],
+        "via": "wiki note: Row Level Security",
+        "text": "When a user signs in, Neon Auth issues a JWT. Every Data API request carries that JWT, and Postgres exposes its subject as **`auth.user_id()`**. `contacts.user_id` defaults to that value, so the database — not the application — decides who owns a row.\n\nRLS is **enabled and forced** on `contacts` (forced so it applies to the table owner too), with four separate policies:\n\n```sql\ncreate policy contacts_select_own on public.contacts\n  for select to authenticated\n  using (auth.user_id() = user_id);\n\ncreate policy contacts_insert_own on public.contacts\n  for insert to authenticated\n  with check (auth.user_id() = user_id);\n\ncreate policy contacts_update_own on public.contacts\n  for update to authenticated\n  using (auth.user_id() = user_id)\n  with check (auth.user_id() = user_id);\n\ncreate policy contacts_delete_own on public.contacts\n  for delete to authenticated\n  using (auth.user_id() = user_id);\n```\n\n**The ownership rule in one sentence:** a row is reachable only when `auth.user_id() = user_id`."
+      }
+    ]
+  },
+  "status": "answered",
+  "reason": null,
+  "raw_model_reply": "The networking tracker uses Row Level Security (RLS) policies to prevent one user from reading another user's contacts [1]. The ownership rule is that a row is reachable only when `auth.user_id() = user_id` [4]. This is enforced through policies such as `contacts_select_own` which uses the condition `auth.user_id() = user_id` for selecting contacts [4].",
+  "answer": "The networking tracker uses Row Level Security (RLS) policies to prevent one user from reading another user's contacts [1]. The ownership rule is that a row is reachable only when `auth.user_id() = user_id` [4]. This is enforced through policies such as `contacts_select_own` which uses the condition `auth.user_id() = user_id` for selecting contacts [4].",
+  "citation_check": {
+    "cited": [
+      1,
+      4
+    ],
+    "valid_citations": [
+      1,
+      4
+    ],
+    "invalid_citations": [],
+    "figures_in_answer": [],
+    "figures_not_in_cited_passages": []
+  },
+  "model_stats": {
+    "purpose": "ask",
+    "wall_seconds": 39.05,
+    "load_seconds": 0.33,
+    "prompt_tokens": 1647,
+    "output_tokens": 89,
+    "prompt_tokens_per_s": 51.5,
+    "output_tokens_per_s": 13.4
+  },
+  "recorded_at": "2026-09-29 17:38:19 PDT",
+  "execution": "local",
+  "network": {
+    "wifi_power": "Off",
+    "default_route": false,
+    "outside_host_answered": false,
+    "offline": true
+  },
+  "internet_reachable": false,
+  "model": {
+    "model": "gemma4:e2b",
+    "execution": "local",
+    "runtime": "Ollama",
+    "endpoint": "http://127.0.0.1:11434",
+    "runtime_version": "0.20.7",
+    "quantization": "Q4_K_M",
+    "parameter_size": "5.1B",
+    "family": "gemma4",
+    "file_format": "gguf",
+    "digest": "7fbdbf8f5e45",
+    "size_on_disk_gb": 7.16,
+    "context_tokens_used": 4096
+  },
+  "memory": {
+    "loaded_gb": 7.68,
+    "in_gpu_gb": 0.0,
+    "processor": "100% CPU"
+  },
+  "test": {
+    "id": "test-3",
+    "kind": "answerable",
+    "design": "Third source, known supporting evidence in more than one section.",
+    "question": "How does the networking tracker stop one user from reading another user's contacts?",
+    "expected_source": "vault/raw/Networking Tracker README.md",
+    "expected_section": "Authentication and RLS ownership",
+    "expected_passage_contains": [
+      "Row Level Security",
+      "auth.user_id()"
+    ],
+    "expected_answer": "Row Level Security inside Postgres: a row is reachable only when auth.user_id() = user_id, enforced by the database rather than application code."
+  },
+  "expected_passage_rank": [],
+  "expected_section_rank": [
+    3,
+    4
+  ]
+}
