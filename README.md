@@ -1,3 +1,7 @@
+<div align="center">
+  <a href="https://github.com/BuildingBrian"><img src=".github/arcade/banner.svg" width="100%" alt="personal-wiki: Ledger, a personal wiki on local Gemma and RAG with Wi-Fi off. A BuildingBrian project."></a>
+</div>
+
 # Ledger — a personal wiki I can talk to, running on my own laptop
 
 **Brian Arevalo Ramos · MBA 290T Fundamentals of Agentic AI · Class 5, Assignment 4 · 2026-09-29**
@@ -479,3 +483,12 @@ assignment's starter prompt describes. Claude wrote the harness code, ran the te
 generated notes against their sources and assembled this README from the saved outputs. It also proposed the sources,
 the test questions and the note plan, which I approved. Every result shown is an actual output of local Gemma on my
 own laptop, failures included, and nothing was sent to a hosted model at question time.
+
+<p align="center">
+  <a href="https://github.com/BuildingBrian"><img src=".github/arcade/btn-stages.svg" alt="Back to stage select: github.com/BuildingBrian"></a>
+  <a href="https://buildingbrian.github.io/BuildingBrian/"><img src=".github/arcade/btn-play.svg" alt="Play Vapor Strike, the arcade game behind the profile"></a>
+</p>
+
+<div align="center">
+  <a href="https://github.com/BuildingBrian"><img src=".github/arcade/footer.svg" width="100%" alt="Thank you for playing. A BuildingBrian project."></a>
+</div>

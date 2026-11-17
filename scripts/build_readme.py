@@ -62,8 +62,24 @@ def test_row(t, where):
             f"{cited or '—'} | {secs} s | [card]({where}/ask/{t['test']['id']}.md) |")
 
 
+# Arcade theme blocks (assets live in .github/arcade/; they wrap the README and carry no content)
+ARCADE_TOP = """<div align="center">
+  <a href="https://github.com/BuildingBrian"><img src=".github/arcade/banner.svg" width="100%" alt="personal-wiki: Ledger, a personal wiki on local Gemma and RAG with Wi-Fi off. A BuildingBrian project."></a>
+</div>
+"""
+ARCADE_BOTTOM = """<p align="center">
+  <a href="https://github.com/BuildingBrian"><img src=".github/arcade/btn-stages.svg" alt="Back to stage select: github.com/BuildingBrian"></a>
+  <a href="https://buildingbrian.github.io/BuildingBrian/"><img src=".github/arcade/btn-play.svg" alt="Play Vapor Strike, the arcade game behind the profile"></a>
+</p>
+
+<div align="center">
+  <a href="https://github.com/BuildingBrian"><img src=".github/arcade/footer.svg" width="100%" alt="Thank you for playing. A BuildingBrian project."></a>
+</div>
+"""
+
 L = []
 w = L.append
+w(ARCADE_TOP)
 best = offline if have_offline else online
 w(f"""# Ledger — a personal wiki I can talk to, running on my own laptop
 
@@ -486,5 +502,6 @@ generated notes against their sources and assembled this README from the saved o
 the test questions and the note plan, which I approved. Every result shown is an actual output of local Gemma on my
 own laptop, failures included, and nothing was sent to a hosted model at question time.
 """)
+w(ARCADE_BOTTOM)
 (ROOT / "README.md").write_text("\n".join(L), encoding="utf-8")
 print("README.md written:", len("\n".join(L)), "chars;", "offline evidence:", have_offline)
